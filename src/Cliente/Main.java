@@ -8,7 +8,7 @@ public class Main {
         Client client;
         String[] user = getLogin();
 
-        client = new Client()
+        //client = new Client();
 
     }
 
