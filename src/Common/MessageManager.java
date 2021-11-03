@@ -4,32 +4,46 @@ import java.net.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class MessageManager {
+public enum MessageManager {
+    // 0x users
+    LOGIN           (00),
+    CREATE_USER     (01),
+    // 1x groups
+    LIST_GROUP      (10),
+    CREATE_GROUP    (11),
+    DELETE_GROUP    (12),
+    // 2x send
+    SEND_PRIVATE    (20),
+    SEND_GROUP      (21),
+    //9x others
+    ERROR           (99);
 
-    static enum MSG_TYPE {
-        LOGIN,
-        SEND_PRIVATE,
-        SEND_GROUP,
-        LIST_GROUP,
-        CREATE_GROUP,
-        DELETE_GROUP,
-        CREATE_USER,
+    private int num;
 
+    MessageManager(int num) {
+        this.num = num;
     }
 
-    public static boolean sendMessage(String ipFrom, String ipTo, int port, String message, int type, DatagramSocket socket) {
+    public boolean sendMessage(InetAddress receiver, int port, String message,DatagramSocket socket) {
+        InetAddress sender = null;
         DatagramPacket packet;
         boolean error = false;
         byte[] data;
 
         try {
-            // Pad with 1 zero (for now)
-            data = String.format("%02d%s", type, message).getBytes(StandardCharsets.UTF_8);
-        } catch (Exception e) {
+            // Add the padded code with 1 zero before the message
+            data = String.format("%02d%s", num, message).getBytes(StandardCharsets.UTF_8);
+
+            //TODO partir mensaje si no cabe
+            packet = new DatagramPacket(data, data.length, receiver, port);
+            socket.send(packet);
+            sender = packet.getAddress();
+        } catch (IOException e) {
+            e.printStackTrace();
             error = true;
         }
 
-        //todo
         return error;
     }
+
 }
