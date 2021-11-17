@@ -21,7 +21,7 @@ public class TestServer {
 				System.out.println("[SERVER] IP\t" + packet.getAddress());
 				System.out.println("[SERVER] PORT\t" + packet.getPort());
 				System.out.println("[SERVER] LENGTH\t" + packet.getLength());
-				System.out.println("[SERVER] DATA\t" + data);
+				System.out.println("[SERVER] DATA\t" + data.substring(2, packet.getLength()));
 				System.out.println("[SERVER] MSG TYPE\t" + data.substring(0,2));
 			}
 

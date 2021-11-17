@@ -12,9 +12,16 @@ public enum MessageManager {
     LIST_GROUP      (10),
     CREATE_GROUP    (11),
     DELETE_GROUP    (12),
-    // 2x send
-    SEND_PRIVATE    (20),
-    SEND_GROUP      (21),
+    // 2x private
+    LIST_PRIVATE (20),
+    CREATE_PRIVATE    (21),
+    DELETE_PRIVATE    (22),
+    // 3x send
+    SEND_PRIVATE    (30),
+    SEND_GROUP      (31),
+    // 4x request
+    REQUEST_UNREAD  (40),
+    REQUEST_PRIVATE  (41),
     //9x others
     ERROR           (99);
 
