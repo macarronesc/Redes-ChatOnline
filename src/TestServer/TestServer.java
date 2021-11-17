@@ -4,7 +4,6 @@ import Common.Parameters;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.Arrays;
 
 public class TestServer {
 	public static void main(String[] args) {

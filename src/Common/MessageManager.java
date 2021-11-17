@@ -46,4 +46,15 @@ public enum MessageManager {
         return error;
     }
 
+    public DatagramPacket receiveMessage(DatagramSocket socket) {
+        try {
+            byte[] bufer = new byte[1000];
+            DatagramPacket answer = new DatagramPacket(bufer, bufer.length);
+            socket.receive(answer);
+            return answer;
+        } catch (IOException e) {
+            System.out.println("IO: " + e.getMessage());
+            return null;
+        }
+    }
 }

@@ -1,24 +1,35 @@
 package Servidor;
 
+import Common.Parameters;
+
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class OpenServer {
     public static void main(String[] args) {
         try {
-            ServerSocket ss = new ServerSocket(Integer.parseInt(args[0]));
+            DatagramSocket socket = new DatagramSocket(Parameters.LISTEN_PORT);
+            byte[] buffer;
+            DatagramPacket packet;
+            String data;
+
             while (true) {
-                Socket sc = ss.accept();
-                new ThreadCliente(sc).start();
+                buffer = new byte[Parameters.MAX_BUFFER_SIZE];
+                packet = new DatagramPacket(buffer, buffer.length);
+                socket.receive(packet);
+                data = new String(packet.getData()); //String from bytes
+                System.out.println("[SERVER] IP\t" + packet.getAddress());
+                System.out.println("[SERVER] PORT\t" + packet.getPort());
+                System.out.println("[SERVER] LENGTH\t" + packet.getLength());
+                System.out.println("[SERVER] DATA\t" + data);
+                System.out.println("[SERVER] MSG TYPE\t" + data.substring(0, 2));
             }
 
         } catch (IOException e) {
-            System.out.println("No puede escuchar en el puerto: " + Integer.parseInt(args[0]));
-            System.exit(-1);
-        }catch (Exception e) {
             e.printStackTrace();
-            System.exit(-1);
         }
     }
 }
