@@ -1,15 +1,15 @@
-package Customer;
+package Client;
 
 import Common.Parameters;
 import java.net.*;
 import java.util.Scanner;
-import static Customer.CustomerMethods.*;
+import static Client.Methods.ClientMethods.*;
 
-public class CustomerMain {
+public class ClientMain {
     static Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args) {
-        DatagramSocket socket;
+        DatagramSocket sendSocket, listenSocket;
         InetAddress server;
         String[] userInfo;
 
@@ -17,22 +17,23 @@ public class CustomerMain {
         /* TEST METHODS */
         try {
             server = InetAddress.getByName(Parameters.SERVER_IP);
-            socket = new DatagramSocket();
+            sendSocket = new DatagramSocket();
+            listenSocket = new DatagramSocket(Parameters.LISTEN_PORT);
         } catch (UnknownHostException | SocketException e) {
             e.printStackTrace();
             return;
         }
 
         /* AUTH OF THE USER */
-        userInfo = auth(socket, server);
+        userInfo = auth(sendSocket, server);
 
         /* MAIN MENU */
         int option = scan.nextInt();
         while (option == 0) {
-            mainMenu(request_unread_messages(socket, server));
+            mainMenu(request_unread_messages(sendSocket, listenSocket, server));
              switch (option){
                  case 1:
-                     list_private_chats(socket,server, userInfo);
+                     list_private_chats(sendSocket, listenSocket, server, userInfo);
                      break;
                  case 2:
                      //list_private_chats(socket,server);

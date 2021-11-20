@@ -1,5 +1,6 @@
-package TestCustomer;
+package TestClient;
 
+import Common.Message;
 import Common.MessageManager;
 import Common.Parameters;
 
@@ -9,13 +10,14 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class TestCustomer {
+public class TestClient {
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         DatagramSocket socket = null;
-        String msg;
         InetAddress server = null;
         boolean error;
+        Message msg;
+        String data;
 
 
         /* TEST METHODS */
@@ -26,9 +28,12 @@ public class TestCustomer {
             e.printStackTrace();
         }
 
-        while (!(msg = scan.nextLine()).equals("EOL")){
-            error = MessageManager.SEND_PRIVATE.sendMessage(server, Parameters.LISTEN_PORT, msg, socket);
+        while (!(data = scan.nextLine()).equals("EOL")){
+            error = MessageManager.SEND_PRIVATE.sendMessage(server, data, socket);
             System.out.println("Response error? " + error);
+
+            msg = MessageManager.RECEIVE.receiveMessage(socket);
+            System.out.println("Received ping from " + msg.getAddress() + ":" + msg.getPort());
         }
 
         System.out.println("Goodbye");

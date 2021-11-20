@@ -1,5 +1,7 @@
 package TestServer;
 
+import Common.Message;
+import Common.MessageManager;
 import Common.Parameters;
 
 import java.io.IOException;
@@ -9,20 +11,16 @@ public class TestServer {
 	public static void main(String[] args) {
 		try {
 			DatagramSocket socket = new DatagramSocket(Parameters.LISTEN_PORT);
-			byte[] buffer;
-			DatagramPacket packet;
-			String data;
+			Message msg;
 
 			while (true) {
-				buffer = new byte[Parameters.MAX_BUFFER_SIZE];
-				packet = new DatagramPacket(buffer, buffer.length);
-				socket.receive(packet);
-				data = new String(packet.getData()); //String from bytes
-				System.out.println("[SERVER] IP\t" + packet.getAddress());
-				System.out.println("[SERVER] PORT\t" + packet.getPort());
-				System.out.println("[SERVER] LENGTH\t" + packet.getLength());
-				System.out.println("[SERVER] DATA\t" + data.substring(2, packet.getLength()));
-				System.out.println("[SERVER] MSG TYPE\t" + data.substring(0,2));
+				msg = MessageManager.RECEIVE.receiveMessage(socket);
+				System.out.println("[SERVER] IP\t" + msg.getAddress());
+				System.out.println("[SERVER] PORT\t" + msg.getPort());
+				System.out.println("[SERVER] LENGTH\t" + msg.getLength());
+				System.out.println("[SERVER] DATA\t" + msg.getData().substring(2, msg.getLength()));
+				System.out.println("[SERVER] MSG TYPE\t" + msg.getData().substring(0,2));
+				// send a ping to the client
 			}
 
 		} catch (IOException e) {
