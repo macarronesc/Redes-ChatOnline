@@ -15,7 +15,7 @@ public class Message {
 	public Message(DatagramPacket packet, String data) {
 		this.packet = packet;
 
-		this.data = data.length() > 2 ? this.data = data.substring(2) : "";
+		this.data = data.length() > 2 ? this.data = data.substring(2).trim() : "";
 		id = Integer.parseInt(data.substring(0,2));
 	}
 

@@ -4,6 +4,7 @@ import Common.Message;
 import Common.MessageManager;
 import Common.Parameters;
 
+import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
@@ -13,10 +14,9 @@ import java.util.Scanner;
 public class TestClient {
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
-        DatagramSocket socket = null;
+        DatagramSocket socket, listenSocket;
         InetAddress server = null;
-        boolean error;
-        Message msg;
+        Message msg = null;
         String data;
 
 
@@ -24,16 +24,20 @@ public class TestClient {
         try {
             server = InetAddress.getByName(Parameters.SERVER_IP);
             socket = new DatagramSocket();
+            listenSocket = new DatagramSocket(Parameters.CLIENT_LISTEN_PORT);
         } catch (UnknownHostException | SocketException e) {
             e.printStackTrace();
+            return;
         }
 
         while (!(data = scan.nextLine()).equals("EOL")){
-            error = MessageManager.SEND_PRIVATE.sendMessage(server, data, socket);
-            System.out.println("Response error? " + error);
-
-            msg = MessageManager.RECEIVE.receiveMessage(socket);
-            System.out.println("Received ping from " + msg.getAddress() + ":" + msg.getPort());
+            try {
+                MessageManager.SEND_PRIVATE.sendMessage(server, data, socket);
+                msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
+                System.out.println("Received ping from " + msg.getAddress() + ":" + msg.getPort());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         System.out.println("Goodbye");
