@@ -1,7 +1,6 @@
 package Client;
 
 import Client.Methods.AccountManager;
-import Common.Chat;
 import Common.Client;
 import Common.Parameters;
 
@@ -10,16 +9,14 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Map;
 import java.util.Scanner;
-
-import static Client.Methods.ClientMethods.list_private_chats;
-import static Client.Methods.ClientMethods.request_unread_messages;
 
 public class ClientMain {
 	private static Scanner scan = new Scanner(System.in);
 
 	public static void main(String[] args) {
+		ListenMiniServer miniServer;
+		Thread miniServerThread;
 		DatagramSocket sendSocket, listenSocket;
 		InetAddress server;
 		Client user = null;
@@ -34,7 +31,7 @@ public class ClientMain {
 			sendSocket = new DatagramSocket();
 			listenSocket = new DatagramSocket(Parameters.CLIENT_LISTEN_PORT); //TODO OJO PRUEBAS
 			//listenSocket = new DatagramSocket(Parameters.LISTEN_PORT);
-			listenSocket.setSoTimeout(Parameters.TIMEOUT_DEFAULT);
+			//listenSocket.setSoTimeout(Parameters.TIMEOUT_DEFAULT);
 		} catch (UnknownHostException | SocketException e) {
 			e.printStackTrace();
 			return;
@@ -45,6 +42,9 @@ public class ClientMain {
 			error = false;
 			option = welcomeMenu(); //1 = login, 2 = register
 			switch (option) {
+				case 0 -> {
+					return;
+				}
 				case 1 -> user = loginMenu(sendSocket, listenSocket, server, false);
 				case 2 -> user = loginMenu(sendSocket, listenSocket, server, true);
 				default -> error = true;
@@ -52,41 +52,40 @@ public class ClientMain {
 			if (user == null) error = true;
 		} while (error);
 
+		// Sockets created and user authenticated, create the listen thread
+		// Thread runs constantly in background awaitng messages from the server
+		try {
+			miniServer = new ListenMiniServer(listenSocket, user);
+			miniServerThread = new Thread(miniServer, "Client Mini Server");
+			miniServerThread.start();
+		} catch (Exception e) {
+			System.out.println("Error initializing client, aborting...");
+			e.printStackTrace();
+			return;
+		}
 
 		/* MAIN MENU */
-		//TODO crear thread donde se ira actualizando los chats privados cada X segundos
-		// usando la clase Client y añadiendolos al map
-
 		do {
-			try {
-				mainMenu(request_unread_messages(sendSocket, listenSocket, server, user));
-				option = scanInt();
-				switch (option) {
-					case 1:
-						strArray = list_private_chats(sendSocket, listenSocket, server, user);
-						System.out.println("You currently have chats with: ");
-						for (String s : strArray)
-							System.out.println(s);
-
-						//TODO v mejor implementacion, guardandolo en local (no hace falta conectar a server)
-						for (Map.Entry<String,Chat> chat : user.getActiveChats().entrySet())
-							if (!chat.getValue().isGroup()) System.out.println(chat.getKey());
-						break;
-					case 2:
-						//new private chat
-						//if user.messages contains user then add to chat
-						//else add new chat to user.messages
-						break;
-					case 3:
-						//list group chats
-						//list_private_chats(socket,server);
-						break;
-					case 4:
-						//list_private_chats(socket,server);
-						break;
-				}
-			} catch (IOException e) {
-				System.out.println("Error getting messages");
+			mainMenu(user.getUnread());
+			option = scanInt();
+			switch (option) {
+				case 1:
+					System.out.println("You currently have chats with: ");
+					for (String s : user.getActiveChats())
+						System.out.println(s);
+					break;
+				case 2:
+					//new private chat
+					//if user.messages contains user then add to chat
+					//else add new chat to user.messages
+					break;
+				case 3:
+					//list group chats
+					//list_private_chats(socket,server);
+					break;
+				case 4:
+					//list_private_chats(socket,server);
+					break;
 			}
 		} while (option != 0);
 		System.out.println("Goodbye");
@@ -111,6 +110,7 @@ public class ClientMain {
 		System.out.println("Hello there");
 		System.out.println("(1) Login");
 		System.out.println("(2) Create account");
+		System.out.println("(0) Cancel and exit");
 		return scanInt();
 	}
 

@@ -22,7 +22,7 @@ public enum MessageManager {
 	SEND_PRIVATE(30),
 	SEND_GROUP(31),
 	// 4x request
-	REQUEST_UNREAD(40),
+	REQUEST_MESSAGE(40),
 	REQUEST_PRIVATE(41),
 	//9x others
 	RECEIVE(98),
@@ -57,6 +57,12 @@ public enum MessageManager {
 		//sender = packet.getAddress();
 	}
 
+	/**
+	 * Receive a newtwork message using a specific socket
+	 * @param socket The listen socket that will receive the message
+	 * @return A Message object containing the message
+	 * @throws IOException If there's a problem with the message
+	 */
 	public Message receiveMessage(DatagramSocket socket) throws IOException {
 		byte[] buffer;
 		String data;
@@ -69,5 +75,10 @@ public enum MessageManager {
 		msg = new Message(answer, data);
 
 		return msg;
+	}
+
+	public String[] processMessage(Message msg){
+
+		return null;
 	}
 }

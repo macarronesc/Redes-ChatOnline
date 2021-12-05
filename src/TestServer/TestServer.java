@@ -17,6 +17,8 @@ public class TestServer {
 			DatagramSocket listenSocket = new DatagramSocket(Parameters.LISTEN_PORT);
 			Message msg;
 			InetAddress client;
+			int msgNum = 0;
+
 
 			while (true) {
 				msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
@@ -39,14 +41,13 @@ public class TestServer {
 				//if (msg.getId() == MessageManager.DELETE_PRIVATE.val() )
 				//if (msg.getId() == MessageManager.SEND_PRIVATE.val() )
 				//if (msg.getId() == MessageManager.SEND_GROUP.val() )
-				if (msg.getId() == MessageManager.REQUEST_UNREAD.val())
-					MessageManager.REQUEST_UNREAD.sendMessage(msg.getAddress(), String.valueOf(69), socket);
-				if (msg.getId() == MessageManager.REQUEST_PRIVATE.val())
-					MessageManager.REQUEST_PRIVATE.sendMessage(msg.getAddress(), "NotMeNotYou\0ur mom\0ricardo milos\0sadpeepo", socket);
+				if (msg.getId() == MessageManager.REQUEST_MESSAGE.val())
+					MessageManager.REQUEST_MESSAGE.sendMessage(msg.getAddress(), "group" + Parameters.SEPARATOR + "ricardo milos" + Parameters.SEPARATOR + "super message num: " + String.valueOf(msgNum), socket);
+				//if (msg.getId() == MessageManager.REQUEST_PRIVATE.val()) MessageManager.REQUEST_PRIVATE.sendMessage(msg.getAddress(), "NotMeNotYou\0ur mom\0ricardo milos\0sadpeepo", socket);
 				//if (msg.getId() == MessageManager.RECEIVE.val() )
 				//if (msg.getId() == MessageManager.ERROR.val() )
 
-
+				msgNum++;
 			}
 
 		} catch (IOException e) {

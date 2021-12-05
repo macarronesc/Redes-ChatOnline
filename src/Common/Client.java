@@ -1,13 +1,12 @@
 package Common;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Client {
-	private int cookie;
-	private String username;
-	private Map<String, Chat> activeChats;
+	private final int cookie;
+	private final String username;
+	private final Map<String, Chat> activeChats;
 
 	public Client(int cookie, String username) {
 		this.cookie = cookie;
@@ -23,11 +22,25 @@ public class Client {
 		return username;
 	}
 
-	public Map<String,Chat> getActiveChats() {
-		return activeChats;
+	public String[] getActiveChats() {
+		return activeChats.keySet().toArray(new String[0]);
 	}
 
-	public void addMessage(String name, String user, String message){
+	public int getUnread() {
+		int unread = 0;
+		for (Map.Entry<String, Chat> chat : activeChats.entrySet()){
+			unread += chat.getValue().getUnread();
+		}
+		return unread;
+	}
+
+	/**
+	 * Adds a message to the user's chats
+	 * @param name Name of the chat
+	 * @param user Name of the user sending the message
+	 * @param message The chat message
+	 */
+	public synchronized void addMessage(String name, String user, String message){
 		Chat chat;
 		if (activeChats.containsKey(name)){
 			activeChats.get(name).addMessage(user, message);
@@ -38,4 +51,11 @@ public class Client {
 		}
 	}
 
+	/**
+	 * Closes a chat
+	 * @param name Name of the chat to be closed
+	 */
+	public void closeChat(String name){
+		activeChats.remove(name);
+	}
 }

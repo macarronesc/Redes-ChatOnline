@@ -12,9 +12,9 @@ import java.net.InetAddress;
 
 public class ClientMethods {
 
-    /* REQUEST UNREAD MESSAGES */
-    public static int request_unread_messages(DatagramSocket socket, DatagramSocket listen,
-                                              InetAddress server, Client user) throws IOException {
+    /* REQUEST UNREAD MESSAGES
+    public static int requestUnreadMessages(DatagramSocket socket, DatagramSocket listen,
+                                            InetAddress server, Client user) throws IOException {
         int unreadMessages = 0;
         String data = user.getUsername() + Parameters.SEPARATOR + user.getCookie();
         Message msg;
@@ -27,8 +27,8 @@ public class ClientMethods {
         return unreadMessages;
     }
 
-    public static String[] list_private_chats(DatagramSocket socket, DatagramSocket listen,
-                                          InetAddress server, Client user) throws IOException {
+    public static String[] listPrivateChats(DatagramSocket socket, DatagramSocket listen,
+                                            InetAddress server, Client user) throws IOException {
         String[] usersConnected = null;
         String data = user.getUsername() + Parameters.SEPARATOR + user.getCookie();
         Message msg;
@@ -41,4 +41,6 @@ public class ClientMethods {
 
         return usersConnected;
     }
+
+     */
 }
