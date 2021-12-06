@@ -2,9 +2,8 @@ package Client;
 
 import Client.Methods.AccountManager;
 import Client.Methods.ClientMethods;
+import Common.Chat;
 import Common.Client;
-import Common.Message;
-import Common.MessageManager;
 import Common.Parameters;
 
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class ClientMain {
-	private static Scanner scan = new Scanner(System.in);
+	private static final Scanner scan = new Scanner(System.in);
 
 	public static void main(String[] args) throws IOException {
 		ListenMiniServer miniServer;
@@ -23,7 +22,6 @@ public class ClientMain {
 		DatagramSocket sendSocket, listenSocket;
 		InetAddress server;
 		Client user = null;
-		String[] strArray;
 		boolean error;
 		int option;
 
@@ -72,23 +70,39 @@ public class ClientMain {
 			mainMenu(user.getUnread());
 			option = scanInt();
 			switch (option) {
-				case 1:
+				case 1 -> {
+					clear();
 					System.out.println("You currently have chats with: \n");
 					System.out.println(user.getActiveChatsString());
-					break;
-				case 2:
+					System.out.println("Do you want to chat? [y/n]");
+					if (scan.nextLine().equals("y"))
+						chatView(selectChat(false, user));
+				}
+				case 2 -> {
+					clear();
 					System.out.println("With whom do you want to start a chat?\n");
-					String guests = scan.nextLine();
-					System.out.println(ClientMethods.newChat(user, guests, sendSocket, listenSocket, server ));
-
-					break;
-				case 3:
+					String guest = scan.nextLine();
+					System.out.println(ClientMethods.newChat(user, guest, sendSocket, listenSocket, server));
+				}
+				case 3 -> {
+					clear();
 					System.out.println("You currently have groups with: \n");
 					System.out.println(user.getActiveGroups());
-					break;
-				case 4:
-					//list_private_chats(socket,server);
-					break;
+					System.out.println("Do you want to chat? [y/n]");
+					if (scan.nextLine().equals("y"))
+						chatView(selectChat(true, user));
+				}
+				case 4 -> {
+					clear();
+					System.out.println("With whom do you want to start a group? \nMax 10 users \nPress 0 to finish\n");
+					String[] guests = new String[9];
+					String line = scan.nextLine();
+					for (int i = 0; !line.equals("0") && i != 9; i++) {
+						guests[i] = line;
+						line = scan.nextLine();
+					}
+					System.out.println(ClientMethods.newGroup(user, guests, sendSocket, listenSocket, server));
+				}
 			}
 		} while (option != 0);
 		System.out.println("Goodbye");
@@ -122,10 +136,10 @@ public class ClientMain {
 		String name, pass;
 		clear();
 		System.out.println("Please enter your account details");
-		System.out.printf("Username: ");
+		System.out.println("Username: ");
 		name = scan.nextLine().replace("\0", "").trim();
 
-		System.out.printf("\nPassword: ");
+		System.out.println("\nPassword: ");
 		pass = scan.nextLine().replace("\0", "").trim();
 		clear();
 
@@ -143,6 +157,22 @@ public class ClientMain {
 				System.out.println("Error logging in, unknown username or wrong password");
 		}
 		return user;
+	}
+
+	private static Chat selectChat(boolean groups, Client user){
+		clear();
+		System.out.println("Who do you want to chat with?\n");
+
+		if (groups)
+			System.out.println("In the case of groups type all participant \nExample: participant1,participant2,participant3,... \n");
+		String userToChat = scan.nextLine();
+		return user.getActiveChats().get(userToChat);
+	}
+
+	/* TO-DO */
+	public static void chatView(Chat chat){
+		clear();
+
 	}
 
 	private static int scanInt() {

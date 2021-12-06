@@ -8,67 +8,45 @@ import java.net.InetAddress;
 
 
 public class ClientMethods {
-
-    /* REQUEST UNREAD MESSAGES
-    public static int requestUnreadMessages(DatagramSocket socket, DatagramSocket listen,
-                                            InetAddress server, Client user) throws IOException {
-        int unreadMessages = 0;
-        String data = user.getUsername() + Parameters.SEPARATOR + user.getCookie();
-        Message msg;
-
-        MessageManager.REQUEST_UNREAD.sendMessage(server, data, socket);
-        msg = MessageManager.RECEIVE.receiveMessage(listen);
-        if (msg.getId() != MessageManager.ERROR.val())
-            unreadMessages = Integer.parseInt(msg.getData());
-
-        return unreadMessages;
-    }
-
-    public static String[] listPrivateChats(DatagramSocket socket, DatagramSocket listen,
-                                            InetAddress server, Client user) throws IOException {
-        String[] usersConnected = null;
-        String data = user.getUsername() + Parameters.SEPARATOR + user.getCookie();
-        Message msg;
-
-        MessageManager.REQUEST_PRIVATE.sendMessage(server, data, socket);
-        msg = MessageManager.RECEIVE.receiveMessage(listen);
-        if (msg.getId() != MessageManager.ERROR.val()) {
-            usersConnected = msg.getData().split(Parameters.SEPARATOR);
-        }
-
-        return usersConnected;
-    }
-
-     */
-
-
-    public static String newChat(Client user, String guests, DatagramSocket socket,  DatagramSocket listenSocket, InetAddress server) throws IOException {
-        if (user.getActiveChats().containsKey(guests))
-            return "You already have a chat with: " + guests;
+    public static String newChat(Client user, String guest, DatagramSocket socket,  DatagramSocket listenSocket, InetAddress server) throws IOException {
+        if (user.getActiveChats().containsKey(guest))
+            return "You already have a chat with: " + guest;
         else {
-            MessageManager.EXIST_USER.sendMessage(server, guests, socket);
+            MessageManager.EXIST_USER.sendMessage(server, guest, socket);
             Message msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
             if (msg.getId() == MessageManager.ERROR.val()) {
-                return "Error, this user does not exist\n";
+                return "Error, this user("+guest+") does not exist\n";
             } else {
-                user.getActiveChats().put(guests, new Chat(false));
-                MessageManager.CREATE_PRIVATE.sendMessage(server, user + Parameters.SEPARATOR + guests, socket);
+                user.getActiveChats().put(guest, new Chat(false));
+                MessageManager.CREATE_PRIVATE.sendMessage(server, user + Parameters.SEPARATOR + guest, socket);
                 // El servidor le tendrá que enviar un mensaje al guests para que este se guarde que tiene ahora un nuevo chat con user
                 return "Success";
             }
         }
     }
 
-    /*public static String newGroup(Client user, String[] guests, DatagramSocket socket,  DatagramSocket listenSocket, InetAddress server) throws IOException {
-        if (user.getActiveChats().containsKey(guests))
-            return "You already have a chat with: " + guests;
-        else {
-            MessageManager.EXIST_USER.sendMessage(server, guests, socket);
-            Message msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
-            if (msg.getId() == MessageManager.ERROR.val()) {
-                return "Error, this user does not exist\n";
+    public static String newGroup(Client user, String[] guests, DatagramSocket socket,  DatagramSocket listenSocket, InetAddress server) throws IOException {
+        StringBuilder answer = new StringBuilder();
+        StringBuilder guestsString = new StringBuilder();
+        for (String guest : guests) {
+            if (user.getActiveChats().containsKey(guest))
+                answer.append("You already have a chat with: ").append(guest).append("\n");
+            else {
+                MessageManager.EXIST_USER.sendMessage(server, guest, socket);
+                Message msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
+                if (msg.getId() == MessageManager.ERROR.val()) {
+                    answer.append("Error, this user (").append(guest).append(") does not exist\n");
+                } else {
+                    MessageManager.CREATE_GROUP.sendMessage(server, user + Parameters.SEPARATOR + guest, socket);
+                    // El servidor le tendrá que enviar un mensaje al guests para que este se guarde que tiene ahora un nuevo chat con user
+                }
             }
+            guestsString.append(",").append(guest);
+        }
+        if (answer.toString().equals("")) {
+            user.getActiveChats().put(guestsString.toString(), new Chat(true));
             return "Success";
         }
-    }*/
+        return answer.toString();
+    }
 }
