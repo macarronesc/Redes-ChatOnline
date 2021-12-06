@@ -1,12 +1,10 @@
-package Servidor;
+package Server;
 
 import Common.Parameters;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 public class OpenServer {
     public static void main(String[] args) {

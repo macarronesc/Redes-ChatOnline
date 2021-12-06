@@ -1,7 +1,10 @@
 package Client;
 
 import Client.Methods.AccountManager;
+import Client.Methods.ClientMethods;
 import Common.Client;
+import Common.Message;
+import Common.MessageManager;
 import Common.Parameters;
 
 import java.io.IOException;
@@ -14,7 +17,7 @@ import java.util.Scanner;
 public class ClientMain {
 	private static Scanner scan = new Scanner(System.in);
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		ListenMiniServer miniServer;
 		Thread miniServerThread;
 		DatagramSocket sendSocket, listenSocket;
@@ -70,18 +73,18 @@ public class ClientMain {
 			option = scanInt();
 			switch (option) {
 				case 1:
-					System.out.println("You currently have chats with: ");
-					for (String s : user.getActiveChats())
-						System.out.println(s);
+					System.out.println("You currently have chats with: \n");
+					System.out.println(user.getActiveChatsString());
 					break;
 				case 2:
-					//new private chat
-					//if user.messages contains user then add to chat
-					//else add new chat to user.messages
+					System.out.println("With whom do you want to start a chat?\n");
+					String guests = scan.nextLine();
+					System.out.println(ClientMethods.newChat(user, guests, sendSocket, listenSocket, server ));
+
 					break;
 				case 3:
-					//list group chats
-					//list_private_chats(socket,server);
+					System.out.println("You currently have groups with: \n");
+					System.out.println(user.getActiveGroups());
 					break;
 				case 4:
 					//list_private_chats(socket,server);

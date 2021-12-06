@@ -18,6 +18,7 @@ public enum MessageManager {
 	LIST_PRIVATE(20),
 	CREATE_PRIVATE(21),
 	DELETE_PRIVATE(22),
+	EXIST_USER(23),
 	// 3x send
 	SEND_PRIVATE(30),
 	SEND_GROUP(31),

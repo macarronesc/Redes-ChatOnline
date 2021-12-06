@@ -1,11 +1,10 @@
-package Servidor;
+package Server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Scanner;
 
 public class Users {
 
@@ -20,7 +19,7 @@ public class Users {
     }
 
 
-    public boolean NewUser(String user, String password, String fileName) {
+    public boolean newUser(String user, String password, String fileName) {
         try {
             FileWriter write = new FileWriter(new File("fileName"));
             String frame = user + "," + password;

@@ -22,8 +22,26 @@ public class Client {
 		return username;
 	}
 
-	public String[] getActiveChats() {
-		return activeChats.keySet().toArray(new String[0]);
+	public Map<String, Chat> getActiveChats(){return this.activeChats;}
+
+	public String getActiveChatsString() {
+		StringBuilder activeChatsString = new StringBuilder();
+
+		for (String key: activeChats.keySet()) {
+			if (!activeChats.get(key).isGroup())
+				activeChatsString.append(activeChats).append("\n\n");
+		}
+		return activeChatsString.toString();
+	}
+
+	public String getActiveGroups() {
+		StringBuilder activeChatsString = new StringBuilder();
+
+		for (String key: activeChats.keySet()) {
+			if (activeChats.get(key).isGroup())
+				activeChatsString.append(activeChats).append("\n\n");
+		}
+		return activeChatsString.toString();
 	}
 
 	public int getUnread() {

@@ -1,9 +1,6 @@
 package Client.Methods;
 
-import Common.Client;
-import Common.Message;
-import Common.MessageManager;
-import Common.Parameters;
+import Common.*;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
@@ -43,4 +40,35 @@ public class ClientMethods {
     }
 
      */
+
+
+    public static String newChat(Client user, String guests, DatagramSocket socket,  DatagramSocket listenSocket, InetAddress server) throws IOException {
+        if (user.getActiveChats().containsKey(guests))
+            return "You already have a chat with: " + guests;
+        else {
+            MessageManager.EXIST_USER.sendMessage(server, guests, socket);
+            Message msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
+            if (msg.getId() == MessageManager.ERROR.val()) {
+                return "Error, this user does not exist\n";
+            } else {
+                user.getActiveChats().put(guests, new Chat(false));
+                MessageManager.CREATE_PRIVATE.sendMessage(server, user + Parameters.SEPARATOR + guests, socket);
+                // El servidor le tendrá que enviar un mensaje al guests para que este se guarde que tiene ahora un nuevo chat con user
+                return "Success";
+            }
+        }
+    }
+
+    /*public static String newGroup(Client user, String[] guests, DatagramSocket socket,  DatagramSocket listenSocket, InetAddress server) throws IOException {
+        if (user.getActiveChats().containsKey(guests))
+            return "You already have a chat with: " + guests;
+        else {
+            MessageManager.EXIST_USER.sendMessage(server, guests, socket);
+            Message msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
+            if (msg.getId() == MessageManager.ERROR.val()) {
+                return "Error, this user does not exist\n";
+            }
+            return "Success";
+        }
+    }*/
 }
