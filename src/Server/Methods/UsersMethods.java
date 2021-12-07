@@ -38,14 +38,23 @@ public class UsersMethods {
         }
     }
 
-    /* TO-DO */
-    public static void communicationPrivateChat(){
+    // THE MESSAGE HAS THE FORMAT: userx:hola que tal...
+    public static void communicationPrivateChat(String sender, String message, HashMap<String, InetAddress> userToIp, DatagramSocket socket) throws IOException {
+        String destination = message.split(":")[0];
+        message = message.split(":")[1];
 
+        MessageManager.SEND_PRIVATE.sendMessage(userToIp.get(destination), sender.concat(":").concat(message), socket);
     }
 
-    /* TO-DO */
-    public static void communicationGroups(){
+    // THE MESSAGE HAS THE FORMAT: userx,userx1,userx2:hola que tal...
+    // THE MESSAGE SENDED HAS THE FORMAT: nameOfGroup:hola que tal...
+    public static void communicationGroups(String name, String message, HashMap<String, InetAddress> userToIp, DatagramSocket socket) throws IOException {
+        String[] guests = message.split(":")[0].split(",");
+        message = message.split(":")[1];
 
+        for (String guest : guests){
+            MessageManager.SEND_GROUP.sendMessage(userToIp.get(guest), name.concat(":").concat(message), socket);
+        }
     }
 }
 
