@@ -1,0 +1,3 @@
+alfredo(false,culo;true,aaaa;false,hola)
+nico(false,culo;true,aaaa;false,hola)
+dani(false,culo;true,aaaa;false,hola)

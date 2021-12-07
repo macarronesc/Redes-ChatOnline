@@ -18,19 +18,27 @@ public class OpenServer {
             DatagramPacket packet;
             String data;
 
-            String[] aaa = new String[3];
-            aaa[0] = "culo";
-            aaa[1] = "AAA";
-            aaa[2] = "AAA";
-            HashMap<String, String[]> map = new HashMap<>();
+            String aaa = "false,culo;true,aaaa;false,hola";
+            HashMap<String, String> map = new HashMap<>();
             map.put("dani",aaa);
             map.put("alfredo",aaa);
             map.put("nico",aaa);
-            FileCSV.saveData(map,"users.txt");
-            System.out.println( Arrays.toString(map.get("dani")));
+            FileCSV.saveDataChats(map,"chats.txt");
+            System.out.println(map.get("dani"));
 
             HashMap<String, String[]> map2 = new HashMap<>();
-            map2 = FileCSV.getData("users.txt");
+            map2 = FileCSV.getDataChats("chats.txt");
+
+            HashMap<String, String> map3 = new HashMap<>();
+            map3.put("dani", "hola");
+            map3.put("dani2", "hola");
+            map3.put("axel", "hola");
+            FileCSV.saveDataUsers(map3, "users.txt");
+
+            HashMap<String, String> map4 = new HashMap<>();
+            map4 = FileCSV.getDataUsers("users.txt");
+            for (String key : map4.keySet())
+                System.out.println(key + " " + map4.get(key));
 
 
             // CUANDO EL SERVIDOR ENVIE LOS DATOS DEL LOGIN TENDRA QUE ENVIAR "cookies/true,chat1;false,chat2;true,1chat3;..."

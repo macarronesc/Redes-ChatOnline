@@ -150,6 +150,7 @@ public class ClientMain {
 			// Even if an user is creating an account, make sure the server registered it by performing a login
 			// That way we can also get a valid connection "cookie"
 			user = AccountManager.sign_in(socket, listenSocket, server, name, pass);
+			System.out.println(user.getActiveChats().get("dani").toString());
 		} catch (IOException e) {
 			System.out.println("Error connecting to the server");
 		} catch (Exception e) {
