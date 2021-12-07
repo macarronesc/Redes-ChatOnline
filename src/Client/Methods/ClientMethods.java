@@ -25,9 +25,8 @@ public class ClientMethods {
         }
     }
 
-    public static String newGroup(Client user, String[] guests, DatagramSocket socket,  DatagramSocket listenSocket, InetAddress server) throws IOException {
+    public static String newGroup(Client user, String[] guests, String name, DatagramSocket socket,  DatagramSocket listenSocket, InetAddress server) throws IOException {
         StringBuilder answer = new StringBuilder();
-        StringBuilder guestsString = new StringBuilder();
         for (String guest : guests) {
             if (user.getActiveChats().containsKey(guest))
                 answer.append("You already have a chat with: ").append(guest).append("\n");
@@ -41,10 +40,9 @@ public class ClientMethods {
                     // El servidor le tendrá que enviar un mensaje al guests para que este se guarde que tiene ahora un nuevo chat con user
                 }
             }
-            guestsString.append(",").append(guest);
         }
         if (answer.toString().equals("")) {
-            user.getActiveChats().put(guestsString.toString(), new Chat(true));
+            user.getActiveChats().put(name, new Chat(true));
             return "Success";
         }
         return answer.toString();

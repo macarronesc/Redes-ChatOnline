@@ -76,7 +76,7 @@ public class ClientMain {
 					System.out.println(user.getActiveChatsString());
 					System.out.println("Do you want to chat? [y/n]");
 					if (scan.nextLine().equals("y"))
-						chatView(selectChat(false, user));
+						chatView(selectChat(user));
 				}
 				case 2 -> {
 					clear();
@@ -90,7 +90,7 @@ public class ClientMain {
 					System.out.println(user.getActiveGroups());
 					System.out.println("Do you want to chat? [y/n]");
 					if (scan.nextLine().equals("y"))
-						chatView(selectChat(true, user));
+						chatView(selectChat(user));
 				}
 				case 4 -> {
 					clear();
@@ -101,7 +101,9 @@ public class ClientMain {
 						guests[i] = line;
 						line = scan.nextLine();
 					}
-					System.out.println(ClientMethods.newGroup(user, guests, sendSocket, listenSocket, server));
+					System.out.println("What's the name of the group?");
+					String name = scan.nextLine();
+					System.out.println(ClientMethods.newGroup(user, guests, name, sendSocket, listenSocket, server));
 				}
 			}
 		} while (option != 0);
@@ -159,12 +161,9 @@ public class ClientMain {
 		return user;
 	}
 
-	private static Chat selectChat(boolean groups, Client user){
+	private static Chat selectChat(Client user){
 		clear();
 		System.out.println("Who do you want to chat with?\n");
-
-		if (groups)
-			System.out.println("In the case of groups type all participant \nExample: participant1,participant2,participant3,... \n");
 		String userToChat = scan.nextLine();
 		return user.getActiveChats().get(userToChat);
 	}
@@ -172,7 +171,6 @@ public class ClientMain {
 	/* TO-DO */
 	public static void chatView(Chat chat){
 		clear();
-
 	}
 
 	private static int scanInt() {

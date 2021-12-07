@@ -1,10 +1,14 @@
 package Server;
 
 import Common.Parameters;
+import Server.FileCSV;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class OpenServer {
     public static void main(String[] args) {
@@ -13,6 +17,26 @@ public class OpenServer {
             byte[] buffer;
             DatagramPacket packet;
             String data;
+
+            String[] aaa = new String[3];
+            aaa[0] = "culo";
+            aaa[1] = "AAA";
+            aaa[2] = "AAA";
+            HashMap<String, String[]> map = new HashMap<>();
+            map.put("dani",aaa);
+            map.put("alfredo",aaa);
+            map.put("nico",aaa);
+            FileCSV.saveData(map,"users.txt");
+            System.out.println( Arrays.toString(map.get("dani")));
+
+            HashMap<String, String[]> map2 = new HashMap<>();
+            map2 = FileCSV.getData("users.txt");
+
+
+            // CUANDO EL SERVIDOR ENVIE LOS DATOS DEL LOGIN TENDRA QUE ENVIAR "cookies/true,chat1;false,chat2;true,1chat3;..."
+            System.out.println( Arrays.toString(map2.get("nico")));
+
+
 
             while (true) {
                 buffer = new byte[Parameters.MAX_BUFFER_SIZE];

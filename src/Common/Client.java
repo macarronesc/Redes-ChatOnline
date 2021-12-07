@@ -6,12 +6,16 @@ import java.util.Map;
 public class Client {
 	private final int cookie;
 	private final String username;
-	private final Map<String, Chat> activeChats;
+	private Map<String, Chat> activeChats;
 
 	public Client(int cookie, String username) {
 		this.cookie = cookie;
 		this.username = username;
 		activeChats = new HashMap<>();
+	}
+
+	public void setActiveChats(Map<String, Chat> activeChats){
+		this.activeChats = activeChats;
 	}
 
 	public int getCookie() {

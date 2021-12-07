@@ -1,4 +1,4 @@
-package Server;
+package Server.Methods;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class Users {
+public class UsersMethods {
 
     // CHECK IF THE USER EXIST IN THE DATABASE
     public boolean checkUser(HashMap<String, String> data, String user) {

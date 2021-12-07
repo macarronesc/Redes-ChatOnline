@@ -1,12 +1,11 @@
 package Client.Methods;
 
-import Common.Client;
-import Common.Message;
-import Common.MessageManager;
-import Common.Parameters;
+import Common.*;
 
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AccountManager {
 	/* USER REGISTRED */
@@ -22,7 +21,7 @@ public class AccountManager {
 	 * @throws Exception - IOException if there's a communication error, general exceptiion otherwise
 	 */
 	public static Client sign_in(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, String name, String pass) throws Exception {
-		Client user = null;
+		Client user;
 		Message msg;
 
 		MessageManager.LOGIN.sendMessage(server, name + Parameters.SEPARATOR + pass, socket);
@@ -30,7 +29,15 @@ public class AccountManager {
 		if (msg.getId() == MessageManager.ERROR.val()) {
 			throw new Exception();
 		} else {
-			user = new Client(Integer.parseInt(msg.getData()), name);
+			user = new Client(Integer.parseInt(msg.getData().split("/")[0]), name);
+			HashMap<String, Chat> map = new HashMap<>();
+			String[] chats = msg.getData().split("/")[1].split(";");
+
+			for(String chat : chats){
+				String[] chatAux = chat.split(",");
+				map.put(chatAux[1], new Chat(Boolean.parseBoolean(chatAux[0])));
+			}
+			user.setActiveChats(map);
 		}
 
 		return user;
