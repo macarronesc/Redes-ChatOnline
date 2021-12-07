@@ -1,38 +1,27 @@
 package Server.Methods;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import Common.MessageManager;
+
 import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
 
 public class UsersMethods {
 
-    // CHECK IF THE USER EXIST IN THE DATABASE
-    public boolean checkUser(HashMap<String, String> data, String user) {
-        return data.containsKey(user);
+    // SEND USER CHATS
+    // THE SERVER SEND: "cookies/true,chat1;false,chat2;true,1chat3;..."
+    public void sendUserChats (InetAddress receiver, String user, HashMap<String, String[]> usersChats, DatagramSocket socket) throws IOException {
+        String chats = "";
+        for (String chat : usersChats.get(user))
+            chats = chats.concat(chat).concat(";");
+        String message = String.valueOf(new Random().nextInt()) + "/" + chats;
+        MessageManager.LOGIN.sendMessage(receiver, message, socket);
     }
 
-    // CHECK IF THE PASSWORD IS THE SAME
-    public boolean checkPassword(HashMap<String, String> data, String user, String password) {
-        return (checkUser(data, user)) && (data.get(user).equals(password));
-    }
 
 
-    public boolean newUser(String user, String password, String fileName) {
-        try {
-            FileWriter write = new FileWriter(new File("fileName"));
-            String frame = user + "," + password;
-            write.append(frame);
-            return true;
-        } catch (FileNotFoundException e) {
-            System.out.println("ERROR. File not found!");
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 }
 

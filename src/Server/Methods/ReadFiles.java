@@ -1,4 +1,4 @@
-package Server;
+package Server.Methods;
 
 import Common.Chat;
 import Common.Client;
@@ -8,7 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class FileCSV {
+public class ReadFiles {
+    // THE KEY OF THE MAP IS THE NAME OF THE USER AND THE VALUE IS THE DIFERENTES CHATS WITH THE BOOLEAN
+    // ABOUT IF IT IS A GROUP OR A PRIVATE CHAT
+    // false,chat1 = String[0]
+    // true,chat2 = String[1]
     public static HashMap<String, String[]> getDataChats(String fileName) {
         HashMap<String, String[]> data = new HashMap<>();
 

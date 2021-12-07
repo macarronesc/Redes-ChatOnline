@@ -1,9 +1,8 @@
 package Server;
 
 import Common.Parameters;
-import Server.FileCSV;
+import Server.Methods.ReadFiles;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -23,28 +22,26 @@ public class OpenServer {
             map.put("dani",aaa);
             map.put("alfredo",aaa);
             map.put("nico",aaa);
-            FileCSV.saveDataChats(map,"chats.txt");
+            ReadFiles.saveDataChats(map,"chats.txt");
             System.out.println(map.get("dani"));
 
             HashMap<String, String[]> map2 = new HashMap<>();
-            map2 = FileCSV.getDataChats("chats.txt");
+            map2 = ReadFiles.getDataChats("chats.txt");
 
             HashMap<String, String> map3 = new HashMap<>();
             map3.put("dani", "hola");
             map3.put("dani2", "hola");
             map3.put("axel", "hola");
-            FileCSV.saveDataUsers(map3, "users.txt");
+            ReadFiles.saveDataUsers(map3, "users.txt");
 
             HashMap<String, String> map4 = new HashMap<>();
-            map4 = FileCSV.getDataUsers("users.txt");
+            map4 = ReadFiles.getDataUsers("users.txt");
             for (String key : map4.keySet())
                 System.out.println(key + " " + map4.get(key));
 
-
-            // CUANDO EL SERVIDOR ENVIE LOS DATOS DEL LOGIN TENDRA QUE ENVIAR "cookies/true,chat1;false,chat2;true,1chat3;..."
             System.out.println( Arrays.toString(map2.get("nico")));
 
-
+            // EN EL SERVIDOR TENDREMOS QUE TENER UNA TABLA DONDE NOS DIGA QUE x IP ES x USER
 
             while (true) {
                 buffer = new byte[Parameters.MAX_BUFFER_SIZE];
