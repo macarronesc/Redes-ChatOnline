@@ -6,8 +6,11 @@ import Server.Methods.ReadFiles;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class OpenServer {
     public static void main(String[] args) {
@@ -17,7 +20,7 @@ public class OpenServer {
             DatagramPacket packet;
             String data;
 
-            String aaa = "false,culo;true,aaaa;false,hola";
+            /*String aaa = "false,culo;true,aaaa;false,hola";
             HashMap<String, String> map = new HashMap<>();
             map.put("dani",aaa);
             map.put("alfredo",aaa);
@@ -39,9 +42,13 @@ public class OpenServer {
             for (String key : map4.keySet())
                 System.out.println(key + " " + map4.get(key));
 
-            System.out.println( Arrays.toString(map2.get("nico")));
+            System.out.println( Arrays.toString(map2.get("nico")));*/
 
-            // EN EL SERVIDOR TENDREMOS QUE TENER UNA TABLA DONDE NOS DIGA QUE x IP ES x USER
+            HashMap<String, String> users = ReadFiles.getDataUsers("users.txt");
+            HashMap<String, String[]> usersChats = ReadFiles.getDataChats("chats.txt");
+            HashMap<String, InetAddress> userToIp;
+
+            //CUANDO UN USUARIO PIDA CREAR UN CHAT PRUIVADO EL SERVIDOR PRIMERO TENDRA QUE COMPROBAR SI ESE USER EXISTE
 
             while (true) {
                 buffer = new byte[Parameters.MAX_BUFFER_SIZE];

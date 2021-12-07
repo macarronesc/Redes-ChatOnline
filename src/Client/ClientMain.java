@@ -101,10 +101,10 @@ public class ClientMain {
 				case 4 -> {
 					clear();
 					System.out.println("With whom do you want to start a group? \nMax 10 users \nPress 0 to finish\n");
-					String[] guests = new String[9];
+					String guests = "";
 					String line = scan.nextLine();
 					for (int i = 0; !line.equals("0") && i != 9; i++) {
-						guests[i] = line;
+						guests = guests.concat(line).concat(",");
 						line = scan.nextLine();
 					}
 					System.out.println("What's the name of the group?");
