@@ -30,10 +30,13 @@ public class TestClient {
             return;
         }
 
-        while (!(data = scan.nextLine()).equals("EOL")){
+        data = scan.nextLine();
+        while (!data.equals("EOL")){
+            System.out.println("a");
             try {
                 MessageManager.SEND_PRIVATE.sendMessage(server, data, socket);
                 msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
+
                 System.out.println("Received ping from " + msg.getAddress() + ":" + msg.getPort());
             } catch (IOException e) {
                 e.printStackTrace();

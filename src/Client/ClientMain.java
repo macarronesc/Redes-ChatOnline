@@ -3,6 +3,7 @@ package Client;
 import Client.Methods.AccountManager;
 import Client.Methods.ClientMethods;
 import Common.Chat;
+import Common.ChatMessage;
 import Common.Client;
 import Common.Parameters;
 
@@ -11,6 +12,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class ClientMain {
@@ -26,6 +28,7 @@ public class ClientMain {
 		int option;
 
 
+		chatView(user, new Chat(false));
 		/* TEST METHODS */
 		try {
 			server = InetAddress.getByName(Parameters.SERVER_IP);
@@ -76,13 +79,15 @@ public class ClientMain {
 					System.out.println(user.getActiveChatsString());
 					System.out.println("Do you want to chat? [y/n]");
 					if (scan.nextLine().equals("y"))
-						chatView(selectChat(user));
+						chatView(user,selectChat(user));
+					break;
 				}
 				case 2 -> {
 					clear();
 					System.out.println("With whom do you want to start a chat?\n");
 					String guest = scan.nextLine();
 					System.out.println(ClientMethods.newChat(user, guest, sendSocket, listenSocket, server));
+					break;
 				}
 				case 3 -> {
 					clear();
@@ -90,7 +95,8 @@ public class ClientMain {
 					System.out.println(user.getActiveGroups());
 					System.out.println("Do you want to chat? [y/n]");
 					if (scan.nextLine().equals("y"))
-						chatView(selectChat(user));
+						chatView(user,selectChat(user));
+					break;
 				}
 				case 4 -> {
 					clear();
@@ -104,6 +110,7 @@ public class ClientMain {
 					System.out.println("What's the name of the group?");
 					String name = scan.nextLine();
 					System.out.println(ClientMethods.newGroup(user, guests, name, sendSocket, listenSocket, server));
+					break;
 				}
 			}
 		} while (option != 0);
@@ -147,7 +154,7 @@ public class ClientMain {
 
 		try {
 			if (register) AccountManager.sign_up(socket, listenSocket, server, name, pass);
-			// Even if an user is creating an account, make sure the server registered it by performing a login
+			// Even if an user  is creating an account, make sure the server registered it by performing a login
 			// That way we can also get a valid connection "cookie"
 			user = AccountManager.sign_in(socket, listenSocket, server, name, pass);
 			System.out.println(user.getActiveChats().get("dani").toString());
@@ -170,8 +177,30 @@ public class ClientMain {
 	}
 
 	/* TO-DO */
-	public static void chatView(Chat chat){
+	public static void chatView(Client user,Chat chat){
 		clear();
+		String msg ="";
+		System.out.println("Type 'exit' to close the chat");
+
+		/* Para probar la función de listado */
+		chat.addMessage("Marta", "Holaaaa");
+		chat.addMessage("Marta", "Que tal?");
+
+		for (ChatMessage a: chat.getMessages()) {
+			System.out.println(a.getUser()+": "+a.getMessage());
+		}
+
+		/* Falta recibir mensajes del servidor (otro usuario) y printarlo*/
+		while(!msg.toLowerCase().equals("exit")){
+			/*"Alex" habria que cambiarlo por user.getUsername*/
+			System.out.print("Alex"+": ");
+			msg = scan.nextLine();
+			chat.addMessage("Alex",msg);
+			/*Recibimos mensaje del servidor*/
+			/*Chat.addMessage(otro user, mensaje del otro user)*/
+			/* Printamos mensaje(usuario+mensaje)*/
+
+		}
 	}
 
 	private static int scanInt() {
