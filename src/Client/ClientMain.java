@@ -2,10 +2,7 @@ package Client;
 
 import Client.Methods.AccountManager;
 import Client.Methods.ClientMethods;
-import Common.Chat;
-import Common.ChatMessage;
-import Common.Client;
-import Common.Parameters;
+import Common.*;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
@@ -29,6 +26,7 @@ public class ClientMain {
 
 
 		chatView(user, new Chat(false));
+
 		/* TEST METHODS */
 		try {
 			server = InetAddress.getByName(Parameters.SERVER_IP);
@@ -190,17 +188,17 @@ public class ClientMain {
 			System.out.println(a.getUser()+": "+a.getMessage());
 		}
 
-		/* Falta recibir mensajes del servidor (otro usuario) y printarlo*/
-		while(!msg.toLowerCase().equals("exit")){
-			/*"Alex" habria que cambiarlo por user.getUsername*/
-			System.out.print("Alex"+": ");
-			msg = scan.nextLine();
-			chat.addMessage("Alex",msg);
-			/*Recibimos mensaje del servidor*/
-			/*Chat.addMessage(otro user, mensaje del otro user)*/
-			/* Printamos mensaje(usuario+mensaje)*/
-
+		ChatsThread local = new ChatsThread(user,chat);
+		local.start();
+		/*Obtenemos nombre de usuario desde el server*/
+		ChatsThread server = new ChatsThread(user/*Aqui user del server*/,chat);
+		while(local.isAlive()){
+			if(!server.isAlive()){
+				server.start();
+			}
 		}
+		server.interrupt();
+
 	}
 
 	private static int scanInt() {
