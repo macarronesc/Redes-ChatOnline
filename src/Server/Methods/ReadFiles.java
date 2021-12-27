@@ -31,26 +31,21 @@ public class ReadFiles {
         return data;
     }
 
-    public static void saveDataChats(HashMap<String, String[]> data, String fileName) {
+    public static String saveDataChats(HashMap<String, String[]> data, String fileName) {
         try (Writer writer = new FileWriter(fileName)) {
             String text = "";
             for (String user : data.keySet()){
                 text = text.concat(user).concat("(");
-                //writer.append(user).append('(');
                 for (String chat : data.get(user)) {
                     text = text.concat(chat).concat(";");
-                    //writer.append(chat).append(';');
                 }
                 text = text.substring(0, text.length() - 1);
                 text = text.concat(")").concat(System.getProperty("line.separator"));
-               // writer.append(')').append(System.getProperty("line.separator"));
             }
             writer.append(text);
-            writer.close();
-            System.out.println("DONE");
+            return "Success saving data of chats";
         } catch (IOException e) {
-            System.out.println("ERROR. Could not save data!");
-            e.printStackTrace();
+            return "ERROR. Could not save data!" + e;
         }
     }
 
@@ -84,7 +79,7 @@ public class ReadFiles {
         return data;
     }
 
-    public static void saveDataUsers(HashMap<String, String> data, String fileName) {
+    public static String saveDataUsers(HashMap<String, String> data, String fileName) {
         try (Writer writer = new FileWriter(fileName)) {
             for (Map.Entry<String, String> entry : data.entrySet()) {
                 writer.append(entry.getKey())
@@ -92,11 +87,9 @@ public class ReadFiles {
                         .append(entry.getValue())
                         .append(System.getProperty("line.separator"));
             }
-            writer.close();
-            System.out.println("DONE");
+            return "Success saving data of users";
         } catch (IOException e) {
-            System.out.println("ERROR. Could not save data!");
-            e.printStackTrace();
+            return "ERROR. Could not save data!" + e;
         }
     }
 }

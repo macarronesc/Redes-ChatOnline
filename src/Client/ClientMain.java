@@ -80,9 +80,15 @@ public class ClientMain {
 					System.out.println("You currently have chats with: \n");
 					String aux = user.getActiveChatsString();
 					if (!Objects.equals(aux, "")) {
-						System.out.println("Do you want to chat? [y/n]");
-						if (scan.nextLine().equals("y"))
-							chatView(user, selectChat(user));
+						System.out.println(aux + "\nDo you want to chat? [y/n]");
+						String stringScan = scan.nextLine();
+						while ((!stringScan.equalsIgnoreCase("y")) && (!stringScan.equalsIgnoreCase("n"))) {
+							if (stringScan.equals("y"))
+								chatView(user, selectChat(user));
+
+							System.out.println("\nPress [y/n] please.\nDo you want to chat? [y/n]");
+							stringScan = scan.nextLine();
+						}
 					}
 				}
 				case 2 -> {
@@ -96,9 +102,15 @@ public class ClientMain {
 					System.out.println("You currently have groups with: \n");
 					String aux = user.getActiveGroups();
 					if (!Objects.equals(aux, "")) {
-						System.out.println("Do you want to chat? [y/n]");
-						if (scan.nextLine().equals("y"))
-							chatView(user, selectChat(user));
+						System.out.println(aux + "\nDo you want to chat? [y/n]");
+						String stringScan = scan.nextLine();
+						while ((!stringScan.equalsIgnoreCase("y")) && (!stringScan.equalsIgnoreCase("n"))) {
+							if (stringScan.equals("y"))
+								chatView(user, selectChat(user));
+
+							System.out.println("\nPress [y/n] please.\nDo you want to chat? [y/n]");
+							stringScan = scan.nextLine();
+						}
 					}
 				}
 				case 4 -> {

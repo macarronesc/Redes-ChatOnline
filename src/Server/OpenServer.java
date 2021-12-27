@@ -53,7 +53,7 @@ public class OpenServer {
 
             while (true) {
                 msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
-                System.out.println("[SERVER] IP\t" + msg.getAddress());
+                System.out.println("\n[SERVER] IP\t" + msg.getAddress());
                 System.out.println("[SERVER] PORT\t" + msg.getPort());
                 System.out.println("[SERVER] LENGTH\t" + msg.getLength());
                 System.out.println("[SERVER] DATA\t" + msg.getData());
@@ -96,8 +96,7 @@ public class OpenServer {
                 }
 
                 if (msg.getId() == MessageManager.EXIST_USER.val()) {
-                    assert users != null;
-                    if (users.containsKey(msg.getData())){
+                    if ((users != null) && (users.containsKey(msg.getData()))){
                         MessageManager.EXIST_USER.sendMessage(msg.getAddress(), "true", socket);
                     } else {
                         MessageManager.ERROR.sendMessage(msg.getAddress(), "", socket);
@@ -120,9 +119,9 @@ public class OpenServer {
                 if (msg.getId() == MessageManager.CREATE_PRIVATE.val()) {
                     String[] dataMessage = msg.getData().split(Parameters.SEPARATOR);
                     if ((users != null) && (users.containsKey(dataMessage[1]))) {
-                        // El servidor le tendrá que enviar un mensaje al guests para que este se guarde que tiene ahora un nuevo chat con user
                         //USER
                         int lengtUser;
+                        //Si el usuario todavia no tiene ningun chat se hace esto
                         if (usersChats.get(dataMessage[0]) == null)
                             lengtUser = 1;
                         else
@@ -171,10 +170,11 @@ public class OpenServer {
                 }
 
                 if (msg.getId() == MessageManager.CREATE_GROUP.val()) {
+                    //dataMessage = user // nameOfGroup // guests (splitet by ",")
                     String[] dataMessage = msg.getData().split(Parameters.SEPARATOR);
-                    if ((users != null) && (users.containsKey(dataMessage[1]))) {
-                        // El servidor le tendrá que enviar un mensaje al guests para que este se guarde que tiene ahora un nuevo chat con user
+                    if ((users != null) && (users.containsKey(dataMessage[0]))) {
                         //USER
+                        //Si el usuario todavia no tiene ningun chat se hace esto
                         int lengtUser;
                         if (usersChats.get(dataMessage[0]) == null)
                             lengtUser = 1;
@@ -187,37 +187,32 @@ public class OpenServer {
                             for (int i = 0; i < lengtUser - 1; i++) {
                                 chatsUser[i] = usersChats.get(dataMessage[0])[i];
                             }
-                            chatsUser[chatsUser.length - 1] = "false," + dataMessage[1];
+                            chatsUser[chatsUser.length - 1] = "true," + dataMessage[1];
                         } else
-                            chatsUser[0] = "false," + dataMessage[1];
+                            chatsUser[0] = "true," + dataMessage[1];
 
                         usersChats.put(dataMessage[0], chatsUser);
 
 
                         //GUEST
-                        int lenghGuest;
-                        if (usersChats.get(dataMessage[1]) == null)
-                            lenghGuest = 1;
-                        else
-                            lenghGuest = usersChats.get(dataMessage[1]).length + 1;
+                        for (String guest: dataMessage[2].split(",")) {
+                            int lenghGuest;
+                            if (usersChats.get(guest) == null)
+                                lenghGuest = 1;
+                            else
+                                lenghGuest = usersChats.get(guest).length + 1;
 
-                        String [] chatsGuest = new String[lenghGuest];
-                        if (lenghGuest != 1) {
-                            for (int i = 0; i < lenghGuest - 1; i++) {
-                                chatsGuest[i] = usersChats.get(dataMessage[1])[i];
-                            }
-                            chatsGuest[chatsGuest.length - 1] = "false," + dataMessage[0];
-                        } else
-                            chatsGuest[0] = "false," + dataMessage[0];
+                            String[] chatsGuest = new String[lenghGuest];
+                            if (lenghGuest != 1) {
+                                for (int i = 0; i < lenghGuest - 1; i++) {
+                                    chatsGuest[i] = usersChats.get(guest)[i];
+                                }
+                                chatsGuest[chatsGuest.length - 1] = "true," + dataMessage[1];
+                            } else
+                                chatsGuest[0] = "true," + dataMessage[1];
 
-                        usersChats.put(dataMessage[1], chatsGuest);
-
-                        /*for (int i = 0; i < usersChats.get(dataMessage[0]).length; i++) {
-                            System.out.println("\nUSER: " + usersChats.get(dataMessage[0])[i]);;
+                            usersChats.put(guest, chatsGuest);
                         }
-                        for (int i = 0; i < usersChats.get(dataMessage[1]).length; i++) {
-                            System.out.println(usersChats.get(dataMessage[1])[i]);;
-                        }*/
                     } else {
                         MessageManager.ERROR.sendMessage(msg.getAddress(), "", socket);
                     }
@@ -230,8 +225,8 @@ public class OpenServer {
                 //if (msg.getId() == MessageManager.DELETE_PRIVATE.val() )
                 //if (msg.getId() == MessageManager.SEND_PRIVATE.val() )
                 //if (msg.getId() == MessageManager.SEND_GROUP.val() )
-                if (msg.getId() == MessageManager.REQUEST_MESSAGE.val())
-                    MessageManager.REQUEST_MESSAGE.sendMessage(msg.getAddress(), "group" + Parameters.SEPARATOR + "ricardo milos" + Parameters.SEPARATOR + "super message num: " + String.valueOf(msgNum), socket);
+                //if (msg.getId() == MessageManager.REQUEST_MESSAGE.val())
+                    //MessageManager.REQUEST_MESSAGE.sendMessage(msg.getAddress(), "group" + Parameters.SEPARATOR + "ricardo milos" + Parameters.SEPARATOR + "super message num: " + String.valueOf(msgNum), socket);
                 //if (msg.getId() == MessageManager.REQUEST_PRIVATE.val()) MessageManager.REQUEST_PRIVATE.sendMessage(msg.getAddress(), "NotMeNotYou\0ur mom\0ricardo milos\0sadpeepo", socket);
                 //if (msg.getId() == MessageManager.RECEIVE.val() )
                 //if (msg.getId() == MessageManager.ERROR.val() )
@@ -239,9 +234,9 @@ public class OpenServer {
                 msgNum++;
                 if ((msgNum % 10) == 0){
                     assert usersChats != null;
-                    ReadFiles.saveDataChats(usersChats, "chats.txt");
+                    System.out.println(ReadFiles.saveDataChats(usersChats, "chats.txt"));
                     assert users != null;
-                    ReadFiles.saveDataUsers(users, "users.txt");
+                    System.out.println(ReadFiles.saveDataUsers(users, "users.txt"));
                     System.out.println("Data saved!");
                 }
             }

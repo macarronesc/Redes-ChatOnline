@@ -1,2 +1,6 @@
-axel(false,dani;)
-dani(true,culo;false,danuhalskdg;false,ha;false,axel;)
+a(true,holaMundo;false,dani)
+q(true,holaMundo;false,dani)
+axel(false,dani;true,holaMundo)
+s(true,holaMundo)
+dani2(false,dani;true,holaMundo)
+dani(true,culo;false,danuhalskdg;false,ha;false,axel;true,holaMundo;false,a;false,q;false,dani2;true,holaMundo)
