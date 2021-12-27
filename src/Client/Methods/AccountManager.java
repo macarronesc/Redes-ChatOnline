@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class AccountManager {
 	/* USER REGISTRED */
@@ -29,13 +30,14 @@ public class AccountManager {
 		if (msg.getId() == MessageManager.ERROR.val()) {
 			throw new Exception();
 		} else {
-			user = new Client(Integer.parseInt(msg.getData().split("/")[0]), name);
+			user = new Client(Integer.parseInt(msg.getData().split(Parameters.SEPARATOR)[0]), name);
 			HashMap<String, Chat> map = new HashMap<>();
-			String[] chats = msg.getData().split("/")[1].split(";");
-
-			for(String chat : chats){
-				String[] chatAux = chat.split(",");
-				map.put(chatAux[1], new Chat(Boolean.parseBoolean(chatAux[0])));
+			if (!Objects.equals(msg.getData().split(Parameters.SEPARATOR)[1], "null")) {
+				String[] chats = msg.getData().split(Parameters.SEPARATOR)[1].split(";");
+				for (String chat : chats) {
+					String[] chatAux = chat.split(",");
+					map.put(chatAux[1], new Chat(Boolean.parseBoolean(chatAux[0])));
+				}
 			}
 			user.setActiveChats(map);
 		}
@@ -52,14 +54,13 @@ public class AccountManager {
 	 * @param server Server address
 	 * @param name   Username
 	 * @param pass   Password
+	 * @return true if succes | false if not
 	 * @throws Exception - IOException if there's a communication error, general exceptiion otherwise
 	 */
-	public static void sign_up(DatagramSocket socket,  DatagramSocket listenSocket,InetAddress server, String name, String pass) throws Exception {
+	public static Boolean sign_up(DatagramSocket socket,  DatagramSocket listenSocket,InetAddress server, String name, String pass) throws Exception {
 		Message msg;
 		MessageManager.CREATE_USER.sendMessage(server, name + Parameters.SEPARATOR + pass, socket);
 		msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
-		if (msg.getId() == MessageManager.ERROR.val()) {
-			throw new Exception();
-		}
+		return msg.getId() != MessageManager.ERROR.val();
 	}
 }
