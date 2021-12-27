@@ -7,6 +7,7 @@ import Common.*;
 import java.io.IOException;
 import java.net.*;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ClientMain {
@@ -71,32 +72,34 @@ public class ClientMain {
 		/* MAIN MENU */
 		do {
 			mainMenu(user.getUnread());
+			refreshChats(user, sendSocket, listenSocket, server);
 			option = scanInt();
 			switch (option) {
 				case 1 -> {
 					clear();
 					System.out.println("You currently have chats with: \n");
-					System.out.println(user.getActiveChatsString());
-					System.out.println("Do you want to chat? [y/n]");
-					if (scan.nextLine().equals("y"))
-						chatView(user,selectChat(user));
-					break;
+					String aux = user.getActiveChatsString();
+					if (!Objects.equals(aux, "")) {
+						System.out.println("Do you want to chat? [y/n]");
+						if (scan.nextLine().equals("y"))
+							chatView(user, selectChat(user));
+					}
 				}
 				case 2 -> {
 					clear();
 					System.out.println("With whom do you want to start a chat?\n");
 					String guest = scan.nextLine();
 					System.out.println(ClientMethods.newChat(user, guest, sendSocket, listenSocket, server));
-					break;
 				}
 				case 3 -> {
 					clear();
 					System.out.println("You currently have groups with: \n");
-					System.out.println(user.getActiveGroups());
-					System.out.println("Do you want to chat? [y/n]");
-					if (scan.nextLine().equals("y"))
-						chatView(user,selectChat(user));
-					break;
+					String aux = user.getActiveGroups();
+					if (!Objects.equals(aux, "")) {
+						System.out.println("Do you want to chat? [y/n]");
+						if (scan.nextLine().equals("y"))
+							chatView(user, selectChat(user));
+					}
 				}
 				case 4 -> {
 					clear();
@@ -110,7 +113,6 @@ public class ClientMain {
 					System.out.println("What's the name of the group?");
 					String name = scan.nextLine();
 					System.out.println(ClientMethods.newGroup(user, guests, name, sendSocket, listenSocket, server));
-					break;
 				}
 			}
 		} while (option != 0);
@@ -140,6 +142,12 @@ public class ClientMain {
 		return scanInt();
 	}
 
+	public static void refreshChats(Client user, DatagramSocket socket, DatagramSocket listenSocket, InetAddress server) throws IOException {
+		MessageManager.REQUEST_CHATS.sendMessage(server, user.getUsername(), socket);
+		Message msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
+		user.setActiveChats(AccountManager.putChats(msg.getData()));
+	}
+
 	private static Client loginMenu(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, boolean register) {
 		Client user = null;
 		String name, pass;
@@ -159,6 +167,7 @@ public class ClientMain {
 			// That way we can also get a valid connection "cookie"
 
 			user = AccountManager.sign_in(socket, listenSocket, server, name, pass);
+
 		} catch (IOException e) {
 			System.out.println("Error connecting to the server");
 		} catch (Exception e) {

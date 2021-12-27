@@ -1,1 +1,2 @@
-dani(true,culo;false,danuhaskdg;false,haks)
+axel(false,dani;)
+dani(true,culo;false,danuhalskdg;false,ha;false,axel;)

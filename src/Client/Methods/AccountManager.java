@@ -31,18 +31,22 @@ public class AccountManager {
 			throw new Exception();
 		} else {
 			user = new Client(Integer.parseInt(msg.getData().split(Parameters.SEPARATOR)[0]), name);
-			HashMap<String, Chat> map = new HashMap<>();
-			if (!Objects.equals(msg.getData().split(Parameters.SEPARATOR)[1], "null")) {
-				String[] chats = msg.getData().split(Parameters.SEPARATOR)[1].split(";");
-				for (String chat : chats) {
-					String[] chatAux = chat.split(",");
-					map.put(chatAux[1], new Chat(Boolean.parseBoolean(chatAux[0])));
-				}
-			}
-			user.setActiveChats(map);
+			user.setActiveChats(putChats(msg.getData().split(Parameters.SEPARATOR)[1]));
 		}
 
 		return user;
+	}
+
+	public static HashMap<String, Chat> putChats(String message){
+		HashMap<String, Chat> map = new HashMap<>();
+		if (!message.equals("null")) {
+			String[] chats = message.split(";");
+			for (String chat : chats) {
+				String[] chatAux = chat.split(",");
+				map.put(chatAux[1], new Chat(Boolean.parseBoolean(chatAux[0])));
+			}
+		}
+		return map;
 	}
 
 	/* USER NOT REGISTRED */

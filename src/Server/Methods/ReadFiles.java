@@ -20,7 +20,7 @@ public class ReadFiles {
             while(scanner.hasNextLine()){
                 String line = scanner.nextLine();
                 String[] lineAux = line.split("\\(");
-                String[] chats = lineAux[1].substring(0,lineAux[1].length() - 2).split(";");
+                String[] chats = lineAux[1].substring(0,lineAux[1].length() - 1).split(";");
                 data.put(lineAux[0], chats);
             }
         } catch (FileNotFoundException e) {

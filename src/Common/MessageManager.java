@@ -25,6 +25,7 @@ public enum MessageManager {
 	// 4x request
 	REQUEST_MESSAGE(40),
 	REQUEST_PRIVATE(41),
+	REQUEST_CHATS(42),
 	//9x others
 	TEST(97),
 	RECEIVE(98),

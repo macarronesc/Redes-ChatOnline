@@ -18,7 +18,7 @@ public class ClientMethods {
                 return "Error, this user("+guest+") does not exist\n";
             } else {
                 user.getActiveChats().put(guest, new Chat(false));
-                MessageManager.CREATE_PRIVATE.sendMessage(server, user + Parameters.SEPARATOR + guest, socket);
+                MessageManager.CREATE_PRIVATE.sendMessage(server, user.getUsername() + Parameters.SEPARATOR + guest, socket);
                 // El servidor le tendrá que enviar un mensaje al guests para que este se guarde que tiene ahora un nuevo chat con user
                 return "Success";
             }
