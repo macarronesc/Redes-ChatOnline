@@ -61,6 +61,7 @@ public class OpenServer {
                 System.out.println("[SERVER] LENGTH\t" + msg.getLength());
                 System.out.println("[SERVER] DATA\t" + msg.getData());
                 System.out.println("[SERVER] MSG TYPE\t" + msg.getId());
+                System.out.println("MESSAGE NUMBER: " +msgNum);
 
                 // send an OK response to the server (temp)
                 if (msg.getId() == MessageManager.LOGIN.val()) {
@@ -71,8 +72,9 @@ public class OpenServer {
                         String chats = "";
                         if (usersChats.get(dataMessage[0]) != null) {
                             for (String chat : usersChats.get(dataMessage[0])) {
-                                chats = chats + chat;
+                                chats = chats + chat + ";";
                             }
+                            chats = chats.substring(0, chats.length() - 1);
                         } else
                             chats = "null";
 
@@ -115,7 +117,8 @@ public class OpenServer {
                     assert usersChats != null;
                     ReadFiles.saveDataChats(usersChats, "chats.txt");
                     assert users != null;
-                    ReadFiles.saveDataUsers(users, "chats.txt");
+                    ReadFiles.saveDataUsers(users, "users.txt");
+                    System.out.println("Data saved!");
                 }
             }
 

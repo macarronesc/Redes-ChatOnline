@@ -33,13 +33,19 @@ public class ReadFiles {
 
     public static void saveDataChats(HashMap<String, String[]> data, String fileName) {
         try (Writer writer = new FileWriter(fileName)) {
+            String text = "";
             for (String user : data.keySet()){
-                writer.append(user).append('(');
+                text = text.concat(user).concat("(");
+                //writer.append(user).append('(');
                 for (String chat : data.get(user)) {
-                    writer.append(chat).append(';');
+                    text = text.concat(chat).concat(";");
+                    //writer.append(chat).append(';');
                 }
-                writer.append(')').append(System.getProperty("line.separator"));
+                text = text.substring(0, text.length() - 1);
+                text = text.concat(")").concat(System.getProperty("line.separator"));
+               // writer.append(')').append(System.getProperty("line.separator"));
             }
+            writer.append(text);
             writer.close();
             System.out.println("DONE");
         } catch (IOException e) {

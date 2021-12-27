@@ -30,10 +30,13 @@ public class Client {
 
 	public String getActiveChatsString() {
 		StringBuilder activeChatsString = new StringBuilder();
-
+		int numChat = 1;
 		for (String key: activeChats.keySet()) {
-			if (!activeChats.get(key).isGroup())
-				activeChatsString.append(activeChats).append("\n\n");
+			if (!activeChats.get(key).isGroup()) {
+				activeChatsString.append("[").append(numChat).append("] ").append(key).append("\n");
+				numChat++;
+			}
+
 		}
 		return activeChatsString.toString();
 	}
@@ -41,15 +44,20 @@ public class Client {
 	public String getActiveGroups() {
 		StringBuilder activeChatsString = new StringBuilder();
 
+		int numChat = 1;
 		for (String key: activeChats.keySet()) {
-			if (activeChats.get(key).isGroup())
-				activeChatsString.append(activeChats).append("\n\n");
+			if (activeChats.get(key).isGroup()) {
+				activeChatsString.append("[").append(numChat).append("] ").append(key).append("\n");
+				numChat++;
+			}
+
 		}
 		return activeChatsString.toString();
 	}
 
 	public int getUnread() {
 		int unread = 0;
+
 		for (Map.Entry<String, Chat> chat : activeChats.entrySet()){
 			unread += chat.getValue().getUnread();
 		}

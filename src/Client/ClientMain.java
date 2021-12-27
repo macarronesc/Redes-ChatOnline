@@ -58,7 +58,7 @@ public class ClientMain {
 
 		// Sockets created and user authenticated, create the listen thread
 		// Thread runs constantly in background awaitng messages from the server
-		try {
+		/*try {
 			miniServer = new ListenMiniServer(listenSocket, user);
 			miniServerThread = new Thread(miniServer, "Client Mini Server");
 			miniServerThread.start();
@@ -66,7 +66,7 @@ public class ClientMain {
 			System.out.println("Error initializing client, aborting...");
 			e.printStackTrace();
 			return;
-		}
+		}*/
 
 		/* MAIN MENU */
 		do {
