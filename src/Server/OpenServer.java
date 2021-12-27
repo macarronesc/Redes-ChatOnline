@@ -93,6 +93,9 @@ public class OpenServer {
                         MessageManager.ERROR.sendMessage(msg.getAddress(), "", socket);
                     }
                 }
+                if (msg.getId() == MessageManager.TEST.val()) {
+                    MessageManager.TEST.sendMessage(msg.getAddress(), "", socket);
+                }
                 //if (msg.getId() == MessageManager.LIST_GROUP.val() )
                 //if (msg.getId() == MessageManager.CREATE_GROUP.val() )
                 //if (msg.getId() == MessageManager.DELETE_GROUP.val() )
@@ -108,6 +111,12 @@ public class OpenServer {
                 //if (msg.getId() == MessageManager.ERROR.val() )
 
                 msgNum++;
+                if ((msgNum % 10) == 0){
+                    assert usersChats != null;
+                    ReadFiles.saveDataChats(usersChats, "chats.txt");
+                    assert users != null;
+                    ReadFiles.saveDataUsers(users, "chats.txt");
+                }
             }
 
         } catch (IOException e) {

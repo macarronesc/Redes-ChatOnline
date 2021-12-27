@@ -5,10 +5,7 @@ import Client.Methods.ClientMethods;
 import Common.*;
 
 import java.io.IOException;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -32,9 +29,14 @@ public class ClientMain {
 			server = InetAddress.getByName(Parameters.SERVER_IP);
 			sendSocket = new DatagramSocket();
 			listenSocket = new DatagramSocket(Parameters.CLIENT_LISTEN_PORT); //TODO OJO PRUEBAS
+			listenSocket.setSoTimeout(10000);
+			MessageManager.TEST.sendMessage(server, "", sendSocket);
+			MessageManager.TEST.receiveMessage(listenSocket);
+
 			//listenSocket = new DatagramSocket(Parameters.LISTEN_PORT);
 			//listenSocket.setSoTimeout(Parameters.TIMEOUT_DEFAULT);
-		} catch (UnknownHostException | SocketException e) {
+		} catch (SocketTimeoutException | UnknownHostException | SocketException e) {
+			System.out.print("Server not found. Bye :)");
 			e.printStackTrace();
 			return;
 		}

@@ -26,6 +26,7 @@ public enum MessageManager {
 	REQUEST_MESSAGE(40),
 	REQUEST_PRIVATE(41),
 	//9x others
+	TEST(97),
 	RECEIVE(98),
 	ERROR(99);
 

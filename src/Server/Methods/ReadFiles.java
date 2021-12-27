@@ -31,10 +31,13 @@ public class ReadFiles {
         return data;
     }
 
-    public static void saveDataChats(HashMap<String, String> data, String fileName) {
+    public static void saveDataChats(HashMap<String, String[]> data, String fileName) {
         try (Writer writer = new FileWriter(fileName)) {
             for (String user : data.keySet()){
-                writer.append(user).append('(').append(data.get(user));
+                writer.append(user).append('(');
+                for (String chat : data.get(user)) {
+                    writer.append(chat).append(';');
+                }
                 writer.append(')').append(System.getProperty("line.separator"));
             }
             writer.close();
