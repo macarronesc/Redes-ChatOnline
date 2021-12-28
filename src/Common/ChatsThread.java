@@ -42,6 +42,7 @@ public class ChatsThread extends Thread{
                 msg = scan.nextLine();
                 chat.addMessage(user.getUsername(),msg);
                 chat.markRead();
+
                 try {
                     MessageManager.SEND_PRIVATE.sendMessage(server, msg, send);
                 } catch (IOException e) {
@@ -58,10 +59,7 @@ public class ChatsThread extends Thread{
             try {
                 Message mesg = null;
                 mesg = MessageManager.RECEIVE.receiveMessage(listen);
-                while(!mesg.getData().split(":")[0].equals("exit")){
-                    System.out.println(mesg.getData());
-                    mesg = MessageManager.RECEIVE.receiveMessage(listen);
-                }
+                System.out.println(mesg.getData());
             } catch (IOException e) {
             }
         }

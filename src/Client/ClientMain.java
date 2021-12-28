@@ -135,12 +135,6 @@ public class ClientMain {
 		return scanInt();
 	}
 
-	public static void refreshChats(Client user, DatagramSocket socket, DatagramSocket listenSocket, InetAddress server) throws IOException {
-		MessageManager.REQUEST_CHATS.sendMessage(server, user.getUsername(), socket);
-		Message msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
-		user.setActiveChats(AccountManager.putChats(msg.getData()));
-	}
-
 	private static Client loginMenu(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, boolean register) {
 		Client user = null;
 		String name, pass;
@@ -188,12 +182,14 @@ public class ClientMain {
 			System.out.println(a.getUser()+": "+a.getMessage());
 		}
 		chat.markRead();
+
 		ChatsThread local = new ChatsThread(socket, listenSocket, server, user,chat, true);
 		local.start();
 
 		if(!chat.isGroup()){
 			ChatsThread threadserver = new ChatsThread(socket, listenSocket, server, null, chat, false);
-			threadserver.start();
+			threadserver.run();
+
 			//Lock the chat until typeing exit
 			while(local.isAlive()){
 			}
