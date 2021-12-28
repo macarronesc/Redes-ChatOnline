@@ -57,7 +57,6 @@ public enum MessageManager {
         else
             packet = new DatagramPacket(data, data.length, receiver, Parameters.CLIENT_LISTEN_PORT);
 		socket.send(packet);
-		//sender = packet.getAddress();
 	}
 
 	/**

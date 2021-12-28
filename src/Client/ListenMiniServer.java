@@ -36,14 +36,6 @@ public class ListenMiniServer implements Runnable {
 				msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
 				//TODO thread para procesar msg? Por si viene troceado o algo, ya se vera
 
-				/*
-				while (msgProcess[threadInd] != null && msgProcess[threadInd].getState() != Thread.State.RUNNABLE){
-					// Find available thread slot
-					msgProcess[threadInd].join();
-					msgProcess[threadInd++] = new Thread(new MessageToChat(msg));
-					if (threadInd == NUM_THREADS) threadInd = 0;
-				}
-				 */
 				System.out.println("Received message! " + msg);
 				convert = new MessageToChat(msg, user);
 				convert.run();

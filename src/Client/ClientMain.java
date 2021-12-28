@@ -6,7 +6,6 @@ import Common.*;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -14,16 +13,13 @@ public class ClientMain {
 	private static final Scanner scan = new Scanner(System.in);
 
 	public static void main(String[] args) throws IOException {
-		ListenMiniServer miniServer;
-		Thread miniServerThread;
+
 		DatagramSocket sendSocket, listenSocket;
 		InetAddress server;
 		Client user = null;
 		boolean error;
 		int option;
 
-
-		//chatView(user, new Chat(false));
 
 		/* TEST METHODS */
 		try {
@@ -34,8 +30,6 @@ public class ClientMain {
 			MessageManager.TEST.sendMessage(server, "", sendSocket);
 			MessageManager.TEST.receiveMessage(listenSocket);
 
-			//listenSocket = new DatagramSocket(Parameters.LISTEN_PORT);
-			//listenSocket.setSoTimeout(Parameters.TIMEOUT_DEFAULT);
 		} catch (SocketTimeoutException | UnknownHostException | SocketException e) {
 			System.out.print("Server not found. Bye :)");
 			e.printStackTrace();
@@ -57,17 +51,6 @@ public class ClientMain {
 			if (user == null) error = true;
 		} while (error);
 
-		// Sockets created and user authenticated, create the listen thread
-		// Thread runs constantly in background awaitng messages from the server
-		/*try {
-			miniServer = new ListenMiniServer(listenSocket, user);
-			miniServerThread = new Thread(miniServer, "Client Mini Server");
-			miniServerThread.start();
-		} catch (Exception e) {
-			System.out.println("Error initializing client, aborting...");
-			e.printStackTrace();
-			return;
-		}*/
 
 		/* MAIN MENU */
 		do {
@@ -83,12 +66,11 @@ public class ClientMain {
 						System.out.println(aux + "\nDo you want to chat? [y/n]");
 						String stringScan = scan.nextLine();
 						while ((!stringScan.equalsIgnoreCase("y")) && (!stringScan.equalsIgnoreCase("n"))) {
-							if (stringScan.equals("y"))
-								chatView(user, selectChat(user));
-
 							System.out.println("\nPress [y/n] please.\nDo you want to chat? [y/n]");
 							stringScan = scan.nextLine();
 						}
+						if (stringScan.equals("y"))
+							chatView(sendSocket, listenSocket, server,user, selectChat(user));
 					}
 				}
 				case 2 -> {
@@ -106,7 +88,7 @@ public class ClientMain {
 						String stringScan = scan.nextLine();
 						while ((!stringScan.equalsIgnoreCase("y")) && (!stringScan.equalsIgnoreCase("n"))) {
 							if (stringScan.equals("y"))
-								chatView(user, selectChat(user));
+								chatView(sendSocket,listenSocket,server, user, selectChat(user));
 
 							System.out.println("\nPress [y/n] please.\nDo you want to chat? [y/n]");
 							stringScan = scan.nextLine();
@@ -139,8 +121,6 @@ public class ClientMain {
 		System.out.println("(2) Create a new private chat");
 		System.out.println("(3) List my group chats");
 		System.out.println("(4) Create a new group chat");
-		// YO PONDRIA ESTA OPCION DENTRO DE 1 Y 2
-		//System.out.println("(r) Refresh");
 		System.out.println("(0) Exit");
 		System.out.println("-----------------------------------------------------------------------");
 	}
@@ -199,30 +179,28 @@ public class ClientMain {
 	}
 
 	/* TO-DO */
-	public static void chatView(Client user,Chat chat){
+	public static void chatView(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, Client user,Chat chat) throws IOException {
 		clear();
 		String msg ="";
 		System.out.println("Type 'exit' to close the chat");
 
-		/* Para probar la función de listado */
-		chat.addMessage("Marta", "Holaaaa");
-		chat.addMessage("Marta", "Que tal?");
-
 		for (ChatMessage a: chat.getMessages()) {
 			System.out.println(a.getUser()+": "+a.getMessage());
 		}
-
-		ChatsThread local = new ChatsThread(user,chat);
+		chat.markRead();
+		ChatsThread local = new ChatsThread(socket, listenSocket, server, user,chat);
 		local.start();
 		/*Obtenemos nombre de usuario desde el server*/
-		ChatsThread server = new ChatsThread(user/*Aqui user del server*/,chat);
+
+		ChatsThread threadserver = new ChatsThread(socket, listenSocket, server, user/*Aqui user del server*/, chat);
+		System.out.println();
+
 		while(local.isAlive()){
-			if(!server.isAlive()){
-				server.start();
+			if(!threadserver.isAlive()){
+				//server.start();
 			}
 		}
-		server.interrupt();
-
+		threadserver.interrupt();
 	}
 
 	private static int scanInt() {
