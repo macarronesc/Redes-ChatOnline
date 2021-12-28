@@ -41,6 +41,13 @@ public enum MessageManager {
 		this.num = num;
 	}
 
+	/**
+	 * Sends a message
+	 * @param receiver The message's destination
+	 * @param message The message to send
+	 * @param socket The socket that sends the message
+	 * @throws IOException If there's a problem with the socket
+	 */
 	public void sendMessage(InetAddress receiver, String message, DatagramSocket socket) throws IOException {
 		InetAddress sender = null;
 		DatagramPacket packet;
@@ -49,18 +56,13 @@ public enum MessageManager {
 
 		// Add the padded code with 1 zero before the message
 		data = String.format("%02d%s", num, message).getBytes(StandardCharsets.UTF_8);
-
-		//TODO partir mensaje si no cabe
-
-        if (receiver.toString().contains("localhost")) //TODO OJO para pruebas
-		    packet = new DatagramPacket(data, data.length, receiver, Parameters.LISTEN_PORT);
-        else
-            packet = new DatagramPacket(data, data.length, receiver, Parameters.CLIENT_LISTEN_PORT);
+		packet = new DatagramPacket(data, data.length, receiver, Parameters.LISTEN_PORT);
 		socket.send(packet);
 	}
 
 	/**
 	 * Receive a newtwork message using a specific socket
+	 *
 	 * @param socket The listen socket that will receive the message
 	 * @return A Message object containing the message
 	 * @throws IOException If there's a problem with the message
@@ -77,10 +79,5 @@ public enum MessageManager {
 		msg = new Message(answer, data);
 
 		return msg;
-	}
-
-	public String[] processMessage(Message msg){
-
-		return null;
 	}
 }

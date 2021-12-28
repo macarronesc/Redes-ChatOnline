@@ -26,7 +26,7 @@ public class ClientMain {
 			server = InetAddress.getByName(Parameters.SERVER_IP);
 			sendSocket = new DatagramSocket();
 			listenSocket = new DatagramSocket(Parameters.CLIENT_LISTEN_PORT); //TODO OJO PRUEBAS
-			listenSocket.setSoTimeout(10000);
+			listenSocket.setSoTimeout(Parameters.TIMEOUT_DEFAULT);
 			MessageManager.TEST.sendMessage(server, "", sendSocket);
 			MessageManager.TEST.receiveMessage(listenSocket);
 
@@ -178,8 +178,7 @@ public class ClientMain {
 		return user.getActiveChats().get(userToChat);
 	}
 
-	/* TO-DO */
-	public static void chatView(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, Client user,Chat chat) throws IOException {
+	public static void chatView(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, Client user,Chat chat) {
 		clear();
 		String msg ="";
 		System.out.println("Type 'exit' to close the chat");
@@ -192,14 +191,9 @@ public class ClientMain {
 		local.start();
 		/*Obtenemos nombre de usuario desde el server*/
 
-		ChatsThread threadserver = new ChatsThread(socket, listenSocket, server, user/*Aqui user del server*/, chat);
+		ChatsThread threadserver = new ChatsThread(socket, listenSocket, server, user, chat);
 		System.out.println();
 
-		while(local.isAlive()){
-			if(!threadserver.isAlive()){
-				//server.start();
-			}
-		}
 		threadserver.interrupt();
 	}
 
