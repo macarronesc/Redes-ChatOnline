@@ -8,6 +8,7 @@ public class Chat {
 	private boolean group;
 	private int unread;
 
+	//Options to manage chat
 	public Chat(boolean group) {
 		messages = new ArrayList<>();
 		unread = 0;

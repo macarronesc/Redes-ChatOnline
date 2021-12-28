@@ -1,14 +1,12 @@
 package Common;
 
-import java.time.Instant;
 
 public class ChatMessage {
 	private String user;
 	private String message;
-	private Instant time;
 
+	//Optioins to manage the messages of the chat
 	public ChatMessage(String user, String message) {
-		time = Instant.now();
 		this.user = user;
 		this.message = message;
 	}

@@ -13,6 +13,7 @@ public class ChatsThread extends Thread{
     private static final Scanner scan = new Scanner(System.in);
     private boolean local;
 
+    //Creates thread for the chat, boolean indicates if the thread is for local chat or server messages
     public ChatsThread(DatagramSocket socket, DatagramSocket listenSocket, InetAddress serverClient, Client user, Chat chat, boolean local){
         this.user = user;
         this.chat = chat;

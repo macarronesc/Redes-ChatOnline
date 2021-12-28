@@ -8,6 +8,7 @@ public class Client {
 	private final String username;
 	private Map<String, Chat> activeChats;
 
+	//Options for management of the Client
 	public Client(int cookie, String username) {
 		this.cookie = cookie;
 		this.username = username;

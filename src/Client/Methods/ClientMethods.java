@@ -9,6 +9,8 @@ import java.util.Objects;
 
 
 public class ClientMethods {
+
+    //Creation of new prrivate chat and new group
     public static String newChat(Client user, String guest, DatagramSocket socket,  DatagramSocket listenSocket, InetAddress server) throws IOException {
         if (user.getActiveChats().containsKey(guest))
             return "You already have a chat with: " + guest;

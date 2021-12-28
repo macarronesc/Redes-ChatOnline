@@ -62,6 +62,7 @@ public class ClientMain {
 					clear();
 					System.out.println("You currently have chats with: \n");
 					String aux = user.getActiveChatsString();
+					//show active chats and ask if you want to chat
 					if (!Objects.equals(aux, "")) {
 						System.out.println(aux + "\nDo you want to chat? [y/n]");
 						String stringScan = scan.nextLine();
@@ -74,12 +75,14 @@ public class ClientMain {
 					}
 				}
 				case 2 -> {
+					//Create a new private chat
 					clear();
 					System.out.println("With whom do you want to start a chat?\n");
 					String guest = scan.nextLine();
 					System.out.println(ClientMethods.newChat(user, guest, sendSocket, listenSocket, server));
 				}
 				case 3 -> {
+					//Show acive groups and ask to chat
 					clear();
 					System.out.println("You currently have groups with: \n");
 					String aux = user.getActiveGroups();
@@ -96,6 +99,7 @@ public class ClientMain {
 					}
 				}
 				case 4 -> {
+					//Create a new group
 					clear();
 					System.out.println("With whom do you want to start a group? \nMax 10 users \nPress 0 to finish\n");
 					String guests = "";
@@ -178,12 +182,11 @@ public class ClientMain {
 		return user.getActiveChats().get(userToChat);
 	}
 
-	/* TO-DO */
 	public static void chatView(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, Client user,Chat chat) throws IOException {
 		clear();
-		String msg ="";
 		System.out.println("Type 'exit' to close the chat");
 
+		//Shows the chat and create diferents threads, one for the local chat and other for the server messages
 		for (ChatMessage a: chat.getMessages()) {
 			System.out.println(a.getUser()+": "+a.getMessage());
 		}
@@ -194,6 +197,7 @@ public class ClientMain {
 		if(!chat.isGroup()){
 			ChatsThread threadserver = new ChatsThread(socket, listenSocket, server, null, chat, false);
 			threadserver.start();
+			//Lock the chat until typeing exit
 			while(local.isAlive()){
 			}
 			threadserver.interrupt();
@@ -207,13 +211,14 @@ public class ClientMain {
 			for(ChatsThread a: threadserver){
 				a.start();
 			}
-
+			//Lock the chat until typeing exit
 			while(local.isAlive()){
 			}
 
 			for (ChatsThread a: threadserver){
 				a.interrupt();
 			}
+			local.interrupt();
 		}
 
 

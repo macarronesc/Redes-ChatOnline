@@ -4,10 +4,7 @@ import Common.Message;
 import Common.MessageManager;
 import Common.Parameters;
 import Server.Methods.ReadFiles;
-
-import javax.sql.rowset.spi.SyncFactory;
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.*;
@@ -25,6 +22,9 @@ public class OpenServer {
             HashMap<String, String[]> usersChats = ReadFiles.getDataChats("chats.txt");
             HashMap<String, InetAddress> userToIp = new HashMap<String, InetAddress>();
 
+            //Server always operative, depends of the signal he recieves does diferent actions
+            //The MessageManager.XXXXX indicate the action
+
             while (true) {
                 msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
                 System.out.println("\n[SERVER] IP\t" + msg.getAddress());
@@ -34,7 +34,7 @@ public class OpenServer {
                 System.out.println("[SERVER] MSG TYPE\t" + msg.getId());
                 System.out.println("MESSAGE NUMBER: " +msgNum);
 
-                // send an OK response to the server (temp
+                // send an OK response to the server
                 if (msg.getId() == MessageManager.LOGIN.val()) {
                     String[] dataMessage = msg.getData().split(Parameters.SEPARATOR);
                     if ((users != null) && (users.containsKey(dataMessage[0])) && (users.get(dataMessage[0]).equals(dataMessage[1]))){
@@ -187,11 +187,11 @@ public class OpenServer {
                 }
 
                 if (msg.getId() == MessageManager.SEND_PRIVATE.val() ){
-                    msg.getData();
                     MessageManager.SEND_PRIVATE.sendMessage(msg.getAddress(), msg.getData(), socket);
-
                 }
 
+
+                //Every 10 signals, the server saves the data in these files
                 msgNum++;
                 if ((msgNum % 10) == 0){
                     assert usersChats != null;

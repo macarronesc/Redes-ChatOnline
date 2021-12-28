@@ -8,6 +8,7 @@ public class Message {
 	private DatagramPacket packet;
 	private String data;
 
+	//Options for management between server and client
 	public Message(int id){
 		this.id = id;
 	}

@@ -7,6 +7,9 @@ import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 
 public enum MessageManager {
+
+	//Signal to send and recieve signals from connection between server and client
+
 	// 0x users
 	LOGIN(00),
 	CREATE_USER(01),
@@ -50,9 +53,8 @@ public enum MessageManager {
 		// Add the padded code with 1 zero before the message
 		data = String.format("%02d%s", num, message).getBytes(StandardCharsets.UTF_8);
 
-		//TODO partir mensaje si no cabe
 
-        if (receiver.toString().contains("localhost")) //TODO OJO para pruebas
+        if (receiver.toString().contains("localhost"))
 		    packet = new DatagramPacket(data, data.length, receiver, Parameters.LISTEN_PORT);
         else
             packet = new DatagramPacket(data, data.length, receiver, Parameters.CLIENT_LISTEN_PORT);
