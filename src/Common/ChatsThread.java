@@ -13,7 +13,18 @@ public class ChatsThread extends Thread{
     private static final Scanner scan = new Scanner(System.in);
     private boolean local;
 
-    //Creates thread for the chat, boolean indicates if the thread is for local chat or server messages
+
+    /**
+     * Create threads for the client and the server
+     *
+     * @param socket server socket
+     * @param listenSocket takes server messages
+     * @param serverClient server
+     * @param user user, client
+     * @param chat the chat we are using
+     * @param local indicates if we are client or server
+     * @return Error or messages from server
+     */
     public ChatsThread(DatagramSocket socket, DatagramSocket listenSocket, InetAddress serverClient, Client user, Chat chat, boolean local){
         this.user = user;
         this.chat = chat;
@@ -51,7 +62,6 @@ public class ChatsThread extends Thread{
                     System.out.println(mesg.getData());
                     mesg = MessageManager.RECEIVE.receiveMessage(listen);
                 }
-
             } catch (IOException e) {
             }
         }

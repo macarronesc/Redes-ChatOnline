@@ -4,10 +4,12 @@ import Common.Message;
 import Common.MessageManager;
 import Common.Parameters;
 import Server.Methods.ReadFiles;
+
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Random;
 
 public class OpenServer {
     public static void main(String[] args) {
@@ -22,9 +24,6 @@ public class OpenServer {
             HashMap<String, String[]> usersChats = ReadFiles.getDataChats("chats.txt");
             HashMap<String, InetAddress> userToIp = new HashMap<String, InetAddress>();
 
-            //Server always operative, depends of the signal he recieves does diferent actions
-            //The MessageManager.XXXXX indicate the action
-
             while (true) {
                 msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
                 System.out.println("\n[SERVER] IP\t" + msg.getAddress());
@@ -32,12 +31,12 @@ public class OpenServer {
                 System.out.println("[SERVER] LENGTH\t" + msg.getLength());
                 System.out.println("[SERVER] DATA\t" + msg.getData());
                 System.out.println("[SERVER] MSG TYPE\t" + msg.getId());
-                System.out.println("MESSAGE NUMBER: " +msgNum);
+                System.out.println("MESSAGE NUMBER: " + msgNum);
 
-                // send an OK response to the server
+                // send an OK response to the server (temp
                 if (msg.getId() == MessageManager.LOGIN.val()) {
                     String[] dataMessage = msg.getData().split(Parameters.SEPARATOR);
-                    if ((users != null) && (users.containsKey(dataMessage[0])) && (users.get(dataMessage[0]).equals(dataMessage[1]))){
+                    if ((users != null) && (users.containsKey(dataMessage[0])) && (users.get(dataMessage[0]).equals(dataMessage[1]))) {
                         userToIp.put(dataMessage[0], msg.getAddress());
                         String chats = "";
                         if (usersChats.get(dataMessage[0]) != null) {
@@ -70,7 +69,7 @@ public class OpenServer {
                 }
 
                 if (msg.getId() == MessageManager.EXIST_USER.val()) {
-                    if ((users != null) && (users.containsKey(msg.getData()))){
+                    if ((users != null) && (users.containsKey(msg.getData()))) {
                         MessageManager.EXIST_USER.sendMessage(msg.getAddress(), "true", socket);
                     } else {
                         MessageManager.ERROR.sendMessage(msg.getAddress(), "", socket);
@@ -102,7 +101,7 @@ public class OpenServer {
                             lengtUser = usersChats.get(dataMessage[0]).length + 1;
 
 
-                        String [] chatsUser = new String[lengtUser];
+                        String[] chatsUser = new String[lengtUser];
                         if (lengtUser != 1) {
                             for (int i = 0; i < lengtUser - 1; i++) {
                                 chatsUser[i] = usersChats.get(dataMessage[0])[i];
@@ -121,7 +120,7 @@ public class OpenServer {
                         else
                             lenghGuest = usersChats.get(dataMessage[1]).length + 1;
 
-                        String [] chatsGuest = new String[lenghGuest];
+                        String[] chatsGuest = new String[lenghGuest];
                         if (lenghGuest != 1) {
                             for (int i = 0; i < lenghGuest - 1; i++) {
                                 chatsGuest[i] = usersChats.get(dataMessage[1])[i];
@@ -150,7 +149,7 @@ public class OpenServer {
                             lengtUser = usersChats.get(dataMessage[0]).length + 1;
 
 
-                        String [] chatsUser = new String[lengtUser];
+                        String[] chatsUser = new String[lengtUser];
                         if (lengtUser != 1) {
                             for (int i = 0; i < lengtUser - 1; i++) {
                                 chatsUser[i] = usersChats.get(dataMessage[0])[i];
@@ -163,7 +162,7 @@ public class OpenServer {
 
 
                         //GUEST
-                        for (String guest: dataMessage[2].split(",")) {
+                        for (String guest : dataMessage[2].split(",")) {
                             int lenghGuest;
                             if (usersChats.get(guest) == null)
                                 lenghGuest = 1;
@@ -186,14 +185,12 @@ public class OpenServer {
                     }
                 }
 
-                if (msg.getId() == MessageManager.SEND_PRIVATE.val() ){
+                if (msg.getId() == MessageManager.SEND_PRIVATE.val()) {
                     MessageManager.SEND_PRIVATE.sendMessage(msg.getAddress(), msg.getData(), socket);
                 }
 
-
-                //Every 10 signals, the server saves the data in these files
                 msgNum++;
-                if ((msgNum % 10) == 0){
+                if ((msgNum % 10) == 0) {
                     assert usersChats != null;
                     System.out.println(ReadFiles.saveDataChats(usersChats, "chats.txt"));
                     assert users != null;

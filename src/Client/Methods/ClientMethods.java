@@ -10,7 +10,16 @@ import java.util.Objects;
 
 public class ClientMethods {
 
-    //Creation of new prrivate chat and new group
+    /**
+     * Creates a chat with a specific user
+     * @param user The client
+     * @param guest Name of a possible user to chat with
+     * @param socket Send socket
+     * @param listenSocket Receive socket
+     * @param server The server's address
+     * @return An error or information message
+     * @throws IOException If there's a problem with the socket
+     */
     public static String newChat(Client user, String guest, DatagramSocket socket,  DatagramSocket listenSocket, InetAddress server) throws IOException {
         if (user.getActiveChats().containsKey(guest))
             return "You already have a chat with: " + guest;
@@ -30,6 +39,17 @@ public class ClientMethods {
         }
     }
 
+    /**
+     *
+     * Creates a chat with a specific group
+     * @param user The client
+     * @param guests Name of the possible users to chat with, separated by commas
+     * @param socket Send socket
+     * @param listenSocket Receive socket
+     * @param server The server's address
+     * @return An error or information message
+     * @throws IOException If there's a problem with the socket
+     */
     public static String newGroup(Client user, String guests, String name, DatagramSocket socket,  DatagramSocket listenSocket, InetAddress server) throws IOException {
         StringBuilder answer = new StringBuilder();
         String[] guestsList = guests.split(",");

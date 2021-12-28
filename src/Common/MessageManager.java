@@ -40,14 +40,20 @@ public enum MessageManager {
 		return num;
 	}
 
+
 	MessageManager(int num) {
 		this.num = num;
 	}
 
+	/**
+	 * Sends a message
+	 * @param receiver The message's destination
+	 * @param message The message to send
+	 * @param socket The socket that sends the message
+	 * @throws IOException If there's a problem with the socket
+	 */
 	public void sendMessage(InetAddress receiver, String message, DatagramSocket socket) throws IOException {
-		InetAddress sender = null;
 		DatagramPacket packet;
-		boolean error = false;
 		byte[] data;
 
 		// Add the padded code with 1 zero before the message
@@ -81,8 +87,4 @@ public enum MessageManager {
 		return msg;
 	}
 
-	public String[] processMessage(Message msg){
-
-		return null;
-	}
 }

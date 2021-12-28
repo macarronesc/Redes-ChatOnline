@@ -9,10 +9,13 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class ReadFiles {
-    // THE KEY OF THE MAP IS THE NAME OF THE USER AND THE VALUE IS THE DIFERENTES CHATS WITH THE BOOLEAN
-    // ABOUT IF IT IS A GROUP OR A PRIVATE CHAT
-    // false,chat1 = String[0]
-    // true,chat2 = String[1]
+
+    /**
+     * Gets the active chats from a file. The key of the map is the creator user and the value is the participant users
+     *
+     * @param fileName The filename containing the chats
+     * @return Hashmap containing the active chats
+     */
     public static HashMap<String, String[]> getDataChats(String fileName) {
         HashMap<String, String[]> data = new HashMap<>();
 
@@ -31,6 +34,13 @@ public class ReadFiles {
         return data;
     }
 
+    /**
+     * Saves the active chats to a file
+     *
+     * @param data     The active chats
+     * @param fileName A filename
+     * @return Error or informational message
+     */
     public static String saveDataChats(HashMap<String, String[]> data, String fileName) {
         try (Writer writer = new FileWriter(fileName)) {
             String text = "";
@@ -49,20 +59,12 @@ public class ReadFiles {
         }
     }
 
-    public static HashMap<String, String> clientsToMap(Client[] users){
-        HashMap<String, String> map = new HashMap<>();
-        for (Client user : users){
-            Map<String, Chat> chats = user.getActiveChats();
-            String aux = "";
-            for (String chat : chats.keySet()){
-                aux = aux.concat(String.valueOf(chats.get(chat).isGroup())).concat(",");
-                aux = aux.concat(chat).concat(";");
-            }
-            map.put(user.getUsername(),aux);
-        }
-        return map;
-    }
-
+    /**
+     * Gets the user's info
+     *
+     * @param fileName The filename where users are stored
+     * @return A hashmap for the users
+     */
     public static HashMap<String, String> getDataUsers(String fileName) {
         HashMap<String, String> data = new HashMap<>();
 
@@ -79,6 +81,13 @@ public class ReadFiles {
         return data;
     }
 
+    /**
+     * Saves information about the users to a file
+     *
+     * @param data     The data to be saved
+     * @param fileName The filename where users are stored
+     * @return Error or informational message
+     */
     public static String saveDataUsers(HashMap<String, String> data, String fileName) {
         try (Writer writer = new FileWriter(fileName)) {
             for (Map.Entry<String, String> entry : data.entrySet()) {

@@ -20,13 +20,11 @@ public class ClientMain {
 		boolean error;
 		int option;
 
-
-		/* TEST METHODS */
 		try {
 			server = InetAddress.getByName(Parameters.SERVER_IP);
 			sendSocket = new DatagramSocket();
-			listenSocket = new DatagramSocket(Parameters.CLIENT_LISTEN_PORT); //TODO OJO PRUEBAS
-			listenSocket.setSoTimeout(10000);
+			listenSocket = new DatagramSocket(Parameters.CLIENT_LISTEN_PORT);
+			listenSocket.setSoTimeout(Parameters.TIMEOUT_DEFAULT);
 			MessageManager.TEST.sendMessage(server, "", sendSocket);
 			MessageManager.TEST.receiveMessage(listenSocket);
 
@@ -55,7 +53,6 @@ public class ClientMain {
 		/* MAIN MENU */
 		do {
 			mainMenu(user.getUnread());
-			refreshChats(user, sendSocket, listenSocket, server);
 			option = scanInt();
 			switch (option) {
 				case 1 -> {
@@ -182,7 +179,7 @@ public class ClientMain {
 		return user.getActiveChats().get(userToChat);
 	}
 
-	public static void chatView(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, Client user,Chat chat) throws IOException {
+	public static void chatView(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, Client user,Chat chat) {
 		clear();
 		System.out.println("Type 'exit' to close the chat");
 

@@ -35,6 +35,12 @@ public class AccountManager {
 		return user;
 	}
 
+	/**
+	 * Parses a String message into chats
+	 *
+	 * @param message The message received from server
+	 * @return a hashmap containing the chats
+	 */
 	public static HashMap<String, Chat> putChats(String message){
 		HashMap<String, Chat> map = new HashMap<>();
 		if (!message.equals("null")) {
