@@ -26,7 +26,7 @@ public class ClientMain {
 			server = InetAddress.getByName(Parameters.SERVER_IP);
 			sendSocket = new DatagramSocket();
 			listenSocket = new DatagramSocket(Parameters.CLIENT_LISTEN_PORT); //TODO OJO PRUEBAS
-			listenSocket.setSoTimeout(Parameters.TIMEOUT_DEFAULT);
+			listenSocket.setSoTimeout(10000);
 			MessageManager.TEST.sendMessage(server, "", sendSocket);
 			MessageManager.TEST.receiveMessage(listenSocket);
 
@@ -87,9 +87,9 @@ public class ClientMain {
 						System.out.println(aux + "\nDo you want to chat? [y/n]");
 						String stringScan = scan.nextLine();
 						while ((!stringScan.equalsIgnoreCase("y")) && (!stringScan.equalsIgnoreCase("n"))) {
-							if (stringScan.equals("y"))
-								chatView(sendSocket,listenSocket,server, user, selectChat(user));
-
+							if (stringScan.equals("y")) {
+								chatView(sendSocket, listenSocket, server, user, selectChat(user));
+							}
 							System.out.println("\nPress [y/n] please.\nDo you want to chat? [y/n]");
 							stringScan = scan.nextLine();
 						}
@@ -178,7 +178,8 @@ public class ClientMain {
 		return user.getActiveChats().get(userToChat);
 	}
 
-	public static void chatView(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, Client user,Chat chat) {
+	/* TO-DO */
+	public static void chatView(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, Client user,Chat chat) throws IOException {
 		clear();
 		String msg ="";
 		System.out.println("Type 'exit' to close the chat");
@@ -187,14 +188,35 @@ public class ClientMain {
 			System.out.println(a.getUser()+": "+a.getMessage());
 		}
 		chat.markRead();
-		ChatsThread local = new ChatsThread(socket, listenSocket, server, user,chat);
+		ChatsThread local = new ChatsThread(socket, listenSocket, server, user,chat, true);
 		local.start();
-		/*Obtenemos nombre de usuario desde el server*/
 
-		ChatsThread threadserver = new ChatsThread(socket, listenSocket, server, user, chat);
-		System.out.println();
+		if(!chat.isGroup()){
+			ChatsThread threadserver = new ChatsThread(socket, listenSocket, server, null, chat, false);
+			threadserver.start();
+			while(local.isAlive()){
+			}
+			threadserver.interrupt();
+			local.interrupt();
+		}else{
+			ChatsThread[] threadserver = new ChatsThread[10];
+			for (ChatsThread a: threadserver) {
+				a = new ChatsThread(socket, listenSocket,server,null,chat,false);
+			}
 
-		threadserver.interrupt();
+			for(ChatsThread a: threadserver){
+				a.start();
+			}
+
+			while(local.isAlive()){
+			}
+
+			for (ChatsThread a: threadserver){
+				a.interrupt();
+			}
+		}
+
+
 	}
 
 	private static int scanInt() {
