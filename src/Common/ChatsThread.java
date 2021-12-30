@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 public class ChatsThread extends Thread{
     private Client user;
+    private String guest;
     private Chat chat;
     private DatagramSocket send,listen;
     private InetAddress server;
@@ -23,32 +24,36 @@ public class ChatsThread extends Thread{
      * @param user user, client
      * @param chat the chat we are using
      * @param local indicates if we are client or server
+     * @param guest indicates the user to send the message
      * @return Error or messages from server
      */
-    public ChatsThread(DatagramSocket socket, DatagramSocket listenSocket, InetAddress serverClient, Client user, Chat chat, boolean local){
+    public ChatsThread(DatagramSocket socket, DatagramSocket listenSocket, InetAddress serverClient, Client user, Chat chat, boolean local, String guest){
         this.user = user;
         this.chat = chat;
         this.send = socket;
         this.listen = listenSocket;
         this.server = serverClient;
         this.local = local;
+        this.guest = guest;
     }
 
     public void run(){
-        String msg = "";
+        String message = "";
         if(local){
-            while(!msg.toLowerCase().equals("exit")){
+            while(!message.equalsIgnoreCase("exit")){
                 System.out.print(user.getUsername()+": ");
-                msg = scan.nextLine();
-                chat.addMessage(user.getUsername(),msg);
-                chat.markRead();
-                try {
-                    MessageManager.SEND_PRIVATE.sendMessage(server, msg, send);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                message = scan.nextLine();
+                if (!message.equalsIgnoreCase("exit")){
+                    chat.addMessage(user.getUsername(),message);
+                    chat.markRead();
+                    try {
+                        // THE MESSAGE FORMAT IS: MESSAGE / GUEST (NAME OF GROUP OR PERSON) / IS GROUP
+                        MessageManager.SEND_PRIVATE.sendMessage(server, message + Parameters.SEPARATOR + guest + Parameters.SEPARATOR + chat.isGroup(), send);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-
             try {
                 this.interrupt();
             } catch (Throwable e) {
@@ -56,15 +61,15 @@ public class ChatsThread extends Thread{
             }
         }else{
             try {
-                Message mesg = null;
-                mesg = MessageManager.RECEIVE.receiveMessage(listen);
-                while(!mesg.getData().split(":")[0].equals("exit")){
-                    System.out.println(mesg.getData());
-                    mesg = MessageManager.RECEIVE.receiveMessage(listen);
+                Message messageReceive = MessageManager.RECEIVE.receiveMessage(listen);
+                // THE MESSAGE FORMAT IS: MESSAGE / NAME OF THE GROUP OR PERSON TO SEND / IS GROUP / NAME OF THE SENDER
+                String[] data = messageReceive.getData().split(Parameters.SEPARATOR);
+                if ((data[1].equals(guest)) && (data[2].equals(String.valueOf(chat.isGroup())))){
+                    System.out.println(data[3] + ": " + data[0]);
+                    chat.addMessage(data[3], data[0]);
                 }
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         }
-
     }
 }
