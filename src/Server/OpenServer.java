@@ -202,8 +202,6 @@ public class OpenServer {
                             if ((userToIp.containsKey(usersInTheGroupSplit[i])) && (!userToIp.get(usersInTheGroupSplit[i]).equals(msg.getAddress())))
                                 MessageManager.SEND_PRIVATE.sendMessage(userToIp.get(usersInTheGroupSplit[i]), msgSplit[0] +
                                         Parameters.SEPARATOR + msgSplit[1] + Parameters.SEPARATOR + msgSplit[2] + Parameters.SEPARATOR + usersInTheGroupSplit[i], socket);
-                            System.out.println("MENSAEJ " + msgSplit[0] +
-                                    Parameters.SEPARATOR + msgSplit[1] + Parameters.SEPARATOR + msgSplit[2] + Parameters.SEPARATOR + usersInTheGroupSplit[i]);
                         }
                     }else{
                         if (userToIp.containsKey(msgSplit[1]))
