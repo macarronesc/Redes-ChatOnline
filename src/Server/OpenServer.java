@@ -186,7 +186,30 @@ public class OpenServer {
                 }
 
                 if (msg.getId() == MessageManager.SEND_PRIVATE.val()) {
-                    MessageManager.SEND_PRIVATE.sendMessage(msg.getAddress(), msg.getData(), socket);
+                    String[] msgSplit = msg.getData().split(Parameters.SEPARATOR);
+                    if (msgSplit[2].equals("true")){
+                        String usersInTheGroup = "";
+                        assert usersChats != null;
+                        for (String user : usersChats.keySet()){
+                            for (String chat : usersChats.get(user)){
+                                if (chat.split(",")[0].equals("true")){
+                                    usersInTheGroup = usersInTheGroup.concat(user).concat(",");
+                                }
+                            }
+                        }
+                        String[] usersInTheGroupSplit = usersInTheGroup.split(",");
+                        for (int i = 0; i < usersInTheGroupSplit.length - 1; i++) {
+                            if ((userToIp.containsKey(usersInTheGroupSplit[i])) && (!userToIp.get(usersInTheGroupSplit[i]).equals(msg.getAddress())))
+                                MessageManager.SEND_PRIVATE.sendMessage(userToIp.get(usersInTheGroupSplit[i]), msgSplit[0] +
+                                        Parameters.SEPARATOR + msgSplit[1] + Parameters.SEPARATOR + msgSplit[2] + Parameters.SEPARATOR + usersInTheGroupSplit[i], socket);
+                            System.out.println("MENSAEJ " + msgSplit[0] +
+                                    Parameters.SEPARATOR + msgSplit[1] + Parameters.SEPARATOR + msgSplit[2] + Parameters.SEPARATOR + usersInTheGroupSplit[i]);
+                        }
+                    }else{
+                        if (userToIp.containsKey(msgSplit[1]))
+                            MessageManager.SEND_PRIVATE.sendMessage(userToIp.get(msgSplit[1]), msgSplit[0] +
+                                    Parameters.SEPARATOR + msgSplit[1] + Parameters.SEPARATOR + msgSplit[2] + Parameters.SEPARATOR + msgSplit[1], socket);
+                    }
                 }
 
                 msgNum++;

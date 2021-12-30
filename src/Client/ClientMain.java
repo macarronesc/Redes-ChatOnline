@@ -52,6 +52,7 @@ public class ClientMain {
 
 		/* MAIN MENU */
 		do {
+			//refreshChats(user, sendSocket, listenSocket, server);
 			mainMenu(user.getUnread());
 			option = scanInt();
 			switch (option) {
@@ -68,7 +69,7 @@ public class ClientMain {
 							stringScan = scan.nextLine();
 						}
 						if (stringScan.equals("y"))
-							chatView(sendSocket, listenSocket, server,user, selectChat(user));
+							chatView(sendSocket, listenSocket, server,user, selectChat(user, false));
 					}
 				}
 				case 2 -> {
@@ -87,12 +88,11 @@ public class ClientMain {
 						System.out.println(aux + "\nDo you want to chat? [y/n]");
 						String stringScan = scan.nextLine();
 						while ((!stringScan.equalsIgnoreCase("y")) && (!stringScan.equalsIgnoreCase("n"))) {
-							if (stringScan.equals("y")) {
-								chatView(sendSocket, listenSocket, server, user, selectChat(user));
-							}
 							System.out.println("\nPress [y/n] please.\nDo you want to chat? [y/n]");
 							stringScan = scan.nextLine();
 						}
+						if (stringScan.equals("y"))
+							chatView(sendSocket, listenSocket, server,user, selectChat(user, true));
 					}
 				}
 				case 4 -> {
@@ -135,6 +135,13 @@ public class ClientMain {
 		return scanInt();
 	}
 
+	public static void refreshChats(Client user, DatagramSocket socket, DatagramSocket listenSocket, InetAddress server) throws IOException {
+		MessageManager.REQUEST_CHATS.sendMessage(server, user.getUsername(), socket);
+		Message msg = MessageManager.RECEIVE.receiveMessage(listenSocket);
+		System.out.println("MESSAGE: " + msg.getData());
+		user.setActiveChats(AccountManager.putChats(msg.getData()));
+	}
+
 	private static Client loginMenu(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, boolean register) {
 		Client user = null;
 		String name, pass;
@@ -166,50 +173,50 @@ public class ClientMain {
 		return user;
 	}
 
-	private static Chat selectChat(Client user){
+	private static String selectChat(Client user, boolean isGroup){
 		clear();
 		System.out.println("Who do you want to chat with?\n");
 		String userToChat = scan.nextLine();
-		return user.getActiveChats().get(userToChat);
+		while ((!user.getActiveChats().containsKey(userToChat)) || (user.getActiveChats().get(userToChat).isGroup() != isGroup)){
+			System.out.println("This is not a correct chat\nTry again");
+			userToChat = scan.nextLine();
+		}
+		return userToChat;
 	}
 
-	public static void chatView(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, Client user,Chat chat) {
+	public static void chatView(DatagramSocket socket, DatagramSocket listenSocket, InetAddress server, Client user, String guest) {
 		clear();
 		System.out.println("Type 'exit' to close the chat");
-
+		Chat chat = user.getActiveChats().get(guest);
 		//Shows the chat and create diferents threads, one for the local chat and other for the server messages
-		for (ChatMessage a: chat.getMessages()) {
-			System.out.println(a.getUser()+": "+a.getMessage());
+		for (ChatMessage message: chat.getMessages()) {
+			System.out.println(message.getUser()+": "+message.getMessage());
 		}
 		chat.markRead();
 
-		ChatsThread local = new ChatsThread(socket, listenSocket, server, user,chat, true);
+		ChatsThread local = new ChatsThread(socket, listenSocket, server, user,chat, true, guest);
 		local.start();
 
 		if(!chat.isGroup()){
-			ChatsThread threadserver = new ChatsThread(socket, listenSocket, server, null, chat, false);
-			threadserver.run();
-
+			ChatsThread threadserver = new ChatsThread(socket, listenSocket, server, null, chat, false, guest);
+			threadserver.start();
 			//Lock the chat until typeing exit
 			while(local.isAlive()){
 			}
 			threadserver.interrupt();
 			local.interrupt();
 		}else{
-			ChatsThread[] threadserver = new ChatsThread[10];
-			for (ChatsThread a: threadserver) {
-				a = new ChatsThread(socket, listenSocket,server,null,chat,false);
-			}
-
-			for(ChatsThread a: threadserver){
-				a.start();
+			ChatsThread[] threadserver = new ChatsThread[2];
+			for (int i = 0; i < threadserver.length; i++) {
+				threadserver[i] = new ChatsThread(socket, listenSocket,server,null,chat,false, guest);
+				threadserver[i].start();
 			}
 			//Lock the chat until typeing exit
 			while(local.isAlive()){
 			}
 
-			for (ChatsThread a: threadserver){
-				a.interrupt();
+			for (ChatsThread thread: threadserver){
+				thread.interrupt();
 			}
 			local.interrupt();
 		}
